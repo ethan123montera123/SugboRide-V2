@@ -29,33 +29,39 @@
 
 <body class="bg-gray-50 min-h-screen flex flex-col font-sans">
 
-  <!-- Navbar -->
-  <nav class="w-full max-w-7xl mx-auto flex justify-between items-center px-6 py-4 relative">
-    <div class="flex items-center gap-3">
-      <img src="assets/Logo.png" alt="Logo" class="w-10 h-10">
-      <span class="text-2xl font-bold text-blue-600">SugboRide</span>
-    </div>
+<!-- Navbar -->
+<nav class="w-full max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center px-6 py-4 relative gap-3 sm:gap-0">
+  <div class="flex items-center gap-3">
+    <img src="assets/Logo.png" alt="Logo" class="w-10 h-10">
+    <span class="text-2xl font-bold text-blue-600">SugboRide</span>
+  </div>
 
-    <div class="flex items-center gap-4">
-      <!-- Logout Button -->
-      <button id="logout-btn"
-        class="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600 transition font-medium shadow">Logout</button>
+  <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 mt-2 sm:mt-0 w-full sm:w-auto">
+    <!-- Logout Button -->
+    <button id="logout-btn"
+      class="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600 transition font-medium shadow w-full sm:w-auto text-center">
+      Logout
+    </button>
 
-      <!-- History Dropdown -->
-      <div class="relative">
-        <button id="historyBtn"
-          class="bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 transition shadow font-medium">History</button>
-        <div id="historyDropdown"
-          class="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hidden z-50">
-          <p class="text-gray-400 p-3 text-sm">No recent trips yet.</p>
-        </div>
+    <!-- History Dropdown -->
+    <div class="relative w-full sm:w-auto">
+      <button id="historyBtn"
+        class="bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 transition shadow font-medium w-full text-center">
+        History
+      </button>
+      <div id="historyDropdown"
+        class="absolute right-0 mt-2 w-full sm:w-60 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hidden z-50">
+        <p class="text-gray-400 p-3 text-sm">No recent trips yet.</p>
       </div>
-
-      <!-- Traffic Toggle -->
-      <button id="trafficToggle"
-        class="bg-yellow-100 px-4 py-2 rounded-full hover:bg-yellow-200 transition shadow font-medium">Traffic Off</button>
     </div>
-  </nav>
+
+    <!-- Traffic Toggle -->
+    <button id="trafficToggle"
+      class="bg-yellow-100 px-4 py-2 rounded-full hover:bg-yellow-200 transition shadow font-medium w-full sm:w-auto text-center">
+      Traffic Off
+    </button>
+  </div>
+</nav>
 
   <!-- Trip Planner Card -->
   <div class="w-full max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-md p-6 flex flex-col md:flex-row gap-4">
