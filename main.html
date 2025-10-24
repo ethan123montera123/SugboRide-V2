@@ -17,7 +17,7 @@
     .form-visible { opacity: 1; transform: translateX(0); pointer-events: all; position: relative; width: 100%; }
     .form-container { transition: height 0.5s ease-in-out; }
     .password-container { position: relative; }
-    .toggle-password { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6366F1; }
+    .toggle-password { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6366F1; font-weight: 600; }
   </style>
 </head>
 <body class="bg-gradient-to-tr from-pink-50 via-blue-50 to-purple-50 min-h-screen flex items-center justify-center p-4">
@@ -39,7 +39,7 @@
 
         <div class="password-container mb-4">
           <input id="login-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
-          <span id="toggle-login-password" class="toggle-password select-none">👁️</span>
+          <span id="toggle-login-password" class="toggle-password select-none">Show</span>
         </div>
 
         <button id="login-btn" class="w-full p-4 bg-indigo-400 text-white font-semibold rounded-xl hover:bg-indigo-500 shadow-lg transition text-base">Login</button>
@@ -54,7 +54,7 @@
 
         <div class="password-container mb-4">
           <input id="signup-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
-          <span id="toggle-signup-password" class="toggle-password select-none">👁️</span>
+          <span id="toggle-signup-password" class="toggle-password select-none">Show</span>
         </div>
 
         <input id="signup-age" type="number" placeholder="Age" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
@@ -96,20 +96,24 @@
       updateContainerHeight();
     });
 
-    // Show/Hide password toggle
+    // Show/Hide password toggle with text
+    function togglePassword(input, toggle) {
+      if(input.type === 'password'){
+        input.type = 'text';
+        toggle.textContent = 'Hide';
+      } else {
+        input.type = 'password';
+        toggle.textContent = 'Show';
+      }
+    }
+
     const toggleLoginPassword = document.getElementById('toggle-login-password');
     const loginPasswordInput = document.getElementById('login-password');
-
-    toggleLoginPassword.addEventListener('click', () => {
-      loginPasswordInput.type = loginPasswordInput.type === 'password' ? 'text' : 'password';
-    });
+    toggleLoginPassword.addEventListener('click', () => togglePassword(loginPasswordInput, toggleLoginPassword));
 
     const toggleSignupPassword = document.getElementById('toggle-signup-password');
     const signupPasswordInput = document.getElementById('signup-password');
-
-    toggleSignupPassword.addEventListener('click', () => {
-      signupPasswordInput.type = signupPasswordInput.type === 'password' ? 'text' : 'password';
-    });
+    toggleSignupPassword.addEventListener('click', () => togglePassword(signupPasswordInput, toggleSignupPassword));
 
     window.addEventListener('resize', updateContainerHeight);
   </script>
