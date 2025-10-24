@@ -15,7 +15,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- Navbar (not sticky) -->
+  <!-- Navbar -->
   <nav class="w-full max-w-6xl bg-white/80 backdrop-blur-md shadow-2xl flex justify-between items-center px-6 py-3 mx-auto rounded-xl mt-4">
     <div class="flex items-center gap-2">
       <img src="assets/Logo.png" alt="Logo" class="w-8 h-8">
@@ -48,7 +48,7 @@
         <div id="map" class="w-full h-full min-h-[500px]"></div>
       </div>
 
-      <!-- Right Column: Public Transportation (height stays as is) -->
+      <!-- Right Column: Public Transportation -->
       <div class="lg:w-1/3 w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-4">
         <h2 class="text-xl font-semibold text-gray-800 mb-2">Trip Details</h2>
         <div id="transitInfo" class="text-gray-700 overflow-y-auto">
@@ -64,6 +64,7 @@
     &copy; 2025 SugboRide. All rights reserved.
   </footer>
 
+  <!-- Firebase Logout -->
   <script type="module">
     import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
@@ -85,7 +86,7 @@
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 10.3157, lng: 123.8854 }, // Cebu City
+        center: { lat: 10.3157, lng: 123.8854 },
         zoom: 13,
       });
 
@@ -105,6 +106,45 @@
             resolve(`${latLng.lat().toFixed(5)}, ${latLng.lng().toFixed(5)}`);
           }
         });
+      });
+    }
+
+    // Schedule live notifications
+    async function scheduleNotifications(steps) {
+      if (!("Notification" in window)) return;
+
+      if (Notification.permission !== "granted") {
+        await Notification.requestPermission();
+      }
+
+      const now = new Date();
+
+      steps.forEach((step, i) => {
+        // Transit notifications
+        if (step.travel_mode === "TRANSIT") {
+          const departure = step.transit.departure_time?.value;
+          if (!departure) return;
+
+          const departureTime = new Date(departure * 1000);
+          const delay = departureTime - now;
+
+          if (delay > 0) {
+            setTimeout(() => {
+              new Notification("SugboRide Reminder", {
+                body: `Step ${i + 1}: Ride ${step.transit.line.vehicle.type} (${step.transit.line.short_name || step.transit.line.name})`,
+              });
+            }, delay);
+          }
+        }
+
+        // Walking notifications
+        if (step.travel_mode === "WALKING") {
+          setTimeout(() => {
+            new Notification("SugboRide Reminder", {
+              body: `Step ${i + 1}: Walk for ${step.distance.text} (~${step.duration.text})`,
+            });
+          }, 0);
+        }
       });
     }
 
@@ -162,18 +202,13 @@
                     <p><span class="font-semibold">To:</span> ${toAddress}</p>
                   </div>
                 `;
-              } else {
-                transitHtml += `
-                  <div class="mb-3 border-b border-gray-200 pb-2">
-                    <p><span class="font-semibold">Step ${i + 1}:</span> ${step.instructions}</p>
-                    <p><span class="font-semibold">From:</span> ${fromAddress}</p>
-                    <p><span class="font-semibold">To:</span> ${toAddress}</p>
-                  </div>
-                `;
               }
             }
 
             document.getElementById("transitInfo").innerHTML = transitHtml || "<p>No transit steps needed for this route.</p>";
+
+            // Schedule live notifications
+            scheduleNotifications(steps);
           } else {
             alert("Could not calculate route. Please check your input.");
           }
