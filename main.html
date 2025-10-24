@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,19 +11,66 @@
   <link rel="icon" type="image/png" href="assets/Logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
+  <!-- Apple PWA support -->
+  <link rel="apple-touch-icon" href="assets/logo-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#1E40AF">
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .tab-active { border-bottom: 3px solid #6366F1; font-weight: 700; }
-    .tab-inactive { border-bottom: 3px solid transparent; font-weight: 500; }
-    .form-transition { transition: all 0.5s ease-in-out; }
-    .form-hidden { opacity: 0; transform: translateX(50px); pointer-events: none; position: absolute; width: 100%; }
-    .form-visible { opacity: 1; transform: translateX(0); pointer-events: all; position: relative; width: 100%; }
-    .form-container { transition: height 0.5s ease-in-out; }
-    .password-container { position: relative; }
-    .toggle-password { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6366F1; font-weight: 600; }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .tab-active {
+      border-bottom: 3px solid #6366F1;
+      font-weight: 700;
+    }
+
+    .tab-inactive {
+      border-bottom: 3px solid transparent;
+      font-weight: 500;
+    }
+
+    .form-transition {
+      transition: all 0.5s ease-in-out;
+    }
+
+    .form-hidden {
+      opacity: 0;
+      transform: translateX(50px);
+      pointer-events: none;
+      position: absolute;
+      width: 100%;
+    }
+
+    .form-visible {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+      position: relative;
+      width: 100%;
+    }
+
+    .form-container {
+      transition: height 0.5s ease-in-out;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6366F1;
+      font-weight: 600;
+    }
   </style>
 </head>
+
 <body class="bg-gradient-to-tr from-pink-50 via-blue-50 to-purple-50 min-h-screen flex items-center justify-center p-4">
 
   <div class="bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl w-full max-w-md p-8 sm:p-10">
@@ -38,32 +86,44 @@
     <div id="forms-container" class="form-container relative">
       <!-- Login Form -->
       <div id="login-form" class="form-transition form-visible">
-        <input id="login-email" type="email" placeholder="Email" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+        <input id="login-email" type="email" placeholder="Email"
+          class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
 
         <div class="password-container mb-4">
-          <input id="login-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+          <input id="login-password" type="password" placeholder="Password"
+            class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
           <span id="toggle-login-password" class="toggle-password select-none">Show</span>
         </div>
 
-        <button id="login-btn" class="w-full p-4 bg-indigo-400 text-white font-semibold rounded-xl hover:bg-indigo-500 shadow-lg transition text-base">Login</button>
+        <button id="login-btn"
+          class="w-full p-4 bg-indigo-400 text-white font-semibold rounded-xl hover:bg-indigo-500 shadow-lg transition text-base">Login</button>
         <div class="text-center my-4 text-gray-400 text-sm">or</div>
-        <button id="google-login" class="w-full p-4 bg-red-400 text-white font-semibold rounded-xl hover:bg-red-500 shadow-lg transition text-base">Login with Google</button>
+        <button id="google-login"
+          class="w-full p-4 bg-red-400 text-white font-semibold rounded-xl hover:bg-red-500 shadow-lg transition text-base">Login
+          with Google</button>
       </div>
 
       <!-- Signup Form -->
       <div id="signup-form" class="form-transition form-hidden">
-        <input id="signup-name" type="text" placeholder="Full Name" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
-        <input id="signup-email" type="email" placeholder="Email" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+        <input id="signup-name" type="text" placeholder="Full Name"
+          class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+        <input id="signup-email" type="email" placeholder="Email"
+          class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
 
         <div class="password-container mb-4">
-          <input id="signup-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+          <input id="signup-password" type="password" placeholder="Password"
+            class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
           <span id="toggle-signup-password" class="toggle-password select-none">Show</span>
         </div>
 
-        <input id="signup-age" type="number" placeholder="Age" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
-        <button id="signup-btn" class="w-full p-4 bg-purple-400 text-white font-semibold rounded-xl hover:bg-purple-500 shadow-lg transition text-base">Signup</button>
+        <input id="signup-age" type="number" placeholder="Age"
+          class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+        <button id="signup-btn"
+          class="w-full p-4 bg-purple-400 text-white font-semibold rounded-xl hover:bg-purple-500 shadow-lg transition text-base">Signup</button>
         <div class="text-center my-4 text-gray-400 text-sm">or</div>
-        <button id="google-signup" class="w-full p-4 bg-red-400 text-white font-semibold rounded-xl hover:bg-red-500 shadow-lg transition text-base">Signup with Google</button>
+        <button id="google-signup"
+          class="w-full p-4 bg-red-400 text-white font-semibold rounded-xl hover:bg-red-500 shadow-lg transition text-base">Signup
+          with Google</button>
       </div>
     </div>
   </div>
@@ -101,7 +161,7 @@
 
     // Show/Hide password toggle with text
     function togglePassword(input, toggle) {
-      if(input.type === 'password'){
+      if (input.type === 'password') {
         input.type = 'text';
         toggle.textContent = 'Hide';
       } else {
@@ -121,12 +181,13 @@
     window.addEventListener('resize', updateContainerHeight);
 
     if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('Service Worker registered', reg))
-      .catch(err => console.log('Service Worker registration failed:', err));
-  });
-}
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registered', reg))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
   </script>
 </body>
+
 </html>

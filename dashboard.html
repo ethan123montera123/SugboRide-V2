@@ -1,204 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SugboRide — Trip Planner</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1E40AF">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SugboRide — Trip Planner</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1E40AF">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="assets/favicon.png">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Maps API with Places library -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places"></script>
+    <!-- Apple PWA support -->
+    <link rel="apple-touch-icon" href="assets/logo-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- Firebase Auth -->
-  <script type="module" src="auth.js"></script>
+    <!-- Google Maps API with Places library -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places"></script>
+
+    <!-- Firebase Auth -->
+    <script type="module" src="auth.js"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- Navbar -->
-  <nav class="w-full max-w-6xl bg-white/80 backdrop-blur-md shadow-2xl flex justify-between items-center px-6 py-3 mx-auto rounded-xl mt-4">
-    <div class="flex items-center gap-2">
-      <img src="assets/Logo.png" alt="Logo" class="w-8 h-8">
-      <span class="text-xl font-semibold text-blue-700">SugboRide</span>
-    </div>
-    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition">Logout</button>
-  </nav>
-
-  <!-- Main Content -->
-  <main class="flex-1 mt-6 flex flex-col gap-6 px-4">
-
-    <!-- Trip Planner Form -->
-    <div class="bg-white rounded-2xl shadow-lg p-6 w-full flex flex-col sm:flex-row gap-4 items-center max-w-6xl mx-auto">
-      <div class="flex-1 flex flex-col gap-2">
-        <label for="pointA" class="text-gray-700 font-semibold">Starting Point</label>
-        <input id="pointA" type="text" placeholder="Enter starting point" class="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-      </div>
-      <div class="flex-1 flex flex-col gap-2">
-        <label for="pointB" class="text-gray-700 font-semibold">Destination</label>
-        <input id="pointB" type="text" placeholder="Enter destination" class="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-      </div>
-      <button id="planTrip" class="mt-4 sm:mt-0 bg-blue-500 text-white px-6 py-3 rounded-2xl shadow hover:bg-blue-600 transition flex-shrink-0">Plan Trip</button>
-    </div>
-
-    <!-- Two Column Layout -->
-    <div class="flex flex-col lg:flex-row gap-6 w-full max-w-6xl mx-auto">
-
-      <!-- Left Column: Google Maps -->
-      <div class="lg:w-2/3 w-full bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div id="map" class="w-full h-full min-h-[500px]"></div>
-      </div>
-
-      <!-- Right Column: Public Transportation -->
-      <div class="lg:w-1/3 w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-4">
-        <h2 class="text-xl font-semibold text-gray-800 mb-2">Trip Details</h2>
-        <div id="transitInfo" class="text-gray-700 overflow-y-auto">
-          <p>Suggested route steps will appear here after planning your trip.</p>
+    <!-- Navbar -->
+    <nav
+        class="w-full max-w-6xl bg-white/80 backdrop-blur-md shadow-2xl flex justify-between items-center px-6 py-3 mx-auto rounded-xl mt-4">
+        <div class="flex items-center gap-2">
+            <img src="assets/Logo.png" alt="Logo" class="w-8 h-8">
+            <span class="text-xl font-semibold text-blue-700">SugboRide</span>
         </div>
-      </div>
+        <button id="logout-btn"
+            class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition">Logout</button>
+    </nav>
 
-    </div>
+    <!-- Main Content -->
+    <main class="flex-1 mt-6 flex flex-col gap-6 px-4">
 
-  </main>
+        <!-- Trip Planner Form -->
+        <div
+            class="bg-white rounded-2xl shadow-lg p-6 w-full flex flex-col sm:flex-row gap-4 items-center max-w-6xl mx-auto">
+            <div class="flex-1 flex flex-col gap-2">
+                <label for="pointA" class="text-gray-700 font-semibold">Starting Point</label>
+                <input id="pointA" type="text" placeholder="Enter starting point"
+                    class="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+            </div>
+            <div class="flex-1 flex flex-col gap-2">
+                <label for="pointB" class="text-gray-700 font-semibold">Destination</label>
+                <input id="pointB" type="text" placeholder="Enter destination"
+                    class="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+            </div>
+            <button id="planTrip"
+                class="mt-4 sm:mt-0 bg-blue-500 text-white px-6 py-3 rounded-2xl shadow hover:bg-blue-600 transition flex-shrink-0">Plan
+                Trip</button>
+        </div>
 
-  <footer class="p-4 text-center text-gray-400 text-sm mt-auto">
-    &copy; 2025 SugboRide. All rights reserved.
-  </footer>
+        <!-- Two Column Layout -->
+        <div class="flex flex-col lg:flex-row gap-6 w-full max-w-6xl mx-auto">
 
-  <!-- Dashboard Scripts -->
-  <script type="module">
-    import { auth } from './auth.js';
-    import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+            <!-- Left Column: Google Maps -->
+            <div class="lg:w-2/3 w-full bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div id="map" class="w-full h-full min-h-[500px]"></div>
+            </div>
 
-    window.addEventListener('DOMContentLoaded', () => {
+            <!-- Right Column: Public Transportation -->
+            <div class="lg:w-1/3 w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-4">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Trip Details</h2>
+                <div id="transitInfo" class="text-gray-700 overflow-y-auto">
+                    <p>Suggested route steps will appear here after planning your trip.</p>
+                </div>
+            </div>
 
-      // Redirect to login if user is not logged in
-      onAuthStateChanged(auth, (user) => {
-        if (!user) {
-          window.location.href = "main.html";
-        }
-      });
+        </div>
 
-      // Logout button
-      const logoutBtn = document.getElementById("logout-btn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-          signOut(auth)
-            .then(() => window.location.href = "main.html")
-            .catch((error) => alert("Error logging out: " + error.message));
-        });
-      }
+    </main>
 
-      // ------------------------
-      // Google Maps & Trip Planner
-      // ------------------------
-      let map, directionsService, directionsRenderer;
-      let autocompleteA, autocompleteB;
-      const geocoder = new google.maps.Geocoder();
+    <footer class="p-4 text-center text-gray-400 text-sm mt-auto">
+        &copy; 2025 SugboRide. All rights reserved.
+    </footer>
 
-      function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: 10.3157, lng: 123.8854 },
-          zoom: 13,
-        });
+    <!-- Dashboard Scripts -->
+    <script type="module">
+        import { auth } from './auth.js';
+        import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+        window.addEventListener('DOMContentLoaded', () => {
 
-        autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { types: ["geocode"] });
-        autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { types: ["geocode"] });
-      }
+            // Redirect to login if user is not logged in
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    window.location.href = "main.html";
+                }
+            });
 
-      async function getAddress(latLng) {
-        return new Promise((resolve) => {
-          geocoder.geocode({ location: latLng }, (results, status) => {
-            if (status === "OK" && results[0]) {
-              resolve(results[0].formatted_address);
-            } else {
-              resolve(`${latLng.lat().toFixed(5)}, ${latLng.lng().toFixed(5)}`);
-            }
-          });
-        });
-      }
-
-      async function scheduleNotifications(steps) {
-        if (!("Notification" in window)) return;
-
-        if (Notification.permission !== "granted") {
-          await Notification.requestPermission();
-        }
-
-        const now = new Date();
-
-        steps.forEach((step, i) => {
-          if (step.travel_mode === "TRANSIT") {
-            const departure = step.transit.departure_time?.value;
-            if (!departure) return;
-
-            const departureTime = new Date(departure * 1000);
-            const delay = departureTime - now;
-
-            if (delay > 0) {
-              setTimeout(() => {
-                new Notification("SugboRide Reminder", {
-                  body: `Step ${i + 1}: Ride ${step.transit.line.vehicle.type} (${step.transit.line.short_name || step.transit.line.name})`,
+            // Logout button
+            const logoutBtn = document.getElementById("logout-btn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", () => {
+                    signOut(auth)
+                        .then(() => window.location.href = "main.html")
+                        .catch((error) => alert("Error logging out: " + error.message));
                 });
-              }, delay);
             }
-          }
 
-          if (step.travel_mode === "WALKING") {
-            setTimeout(() => {
-              new Notification("SugboRide Reminder", {
-                body: `Step ${i + 1}: Walk for ${step.distance.text} (~${step.duration.text})`,
-              });
-            }, 0);
-          }
-        });
-      }
+            // ------------------------
+            // Google Maps & Trip Planner
+            // ------------------------
+            let map, directionsService, directionsRenderer;
+            let autocompleteA, autocompleteB;
+            const geocoder = new google.maps.Geocoder();
 
-      initMap();
+            function initMap() {
+                map = new google.maps.Map(document.getElementById("map"), {
+                    center: { lat: 10.3157, lng: 123.8854 },
+                    zoom: 13,
+                });
 
-      document.getElementById("planTrip").addEventListener("click", async () => {
-        const pointA = document.getElementById("pointA").value;
-        const pointB = document.getElementById("pointB").value;
+                directionsService = new google.maps.DirectionsService();
+                directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
 
-        if (!pointA || !pointB) {
-          alert("Please enter both points.");
-          return;
-        }
+                autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { types: ["geocode"] });
+                autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { types: ["geocode"] });
+            }
 
-        const request = {
-          origin: pointA,
-          destination: pointB,
-          travelMode: google.maps.TravelMode.TRANSIT,
-        };
+            async function getAddress(latLng) {
+                return new Promise((resolve) => {
+                    geocoder.geocode({ location: latLng }, (results, status) => {
+                        if (status === "OK" && results[0]) {
+                            resolve(results[0].formatted_address);
+                        } else {
+                            resolve(`${latLng.lat().toFixed(5)}, ${latLng.lng().toFixed(5)}`);
+                        }
+                    });
+                });
+            }
 
-        directionsService.route(request, async (result, status) => {
-          if (status === "OK") {
-            directionsRenderer.setDirections(result);
+            async function scheduleNotifications(steps) {
+                if (!("Notification" in window)) return;
 
-            const steps = result.routes[0].legs[0].steps;
-            let transitHtml = "";
+                if (Notification.permission !== "granted") {
+                    await Notification.requestPermission();
+                }
 
-            for (let i = 0; i < steps.length; i++) {
-              const step = steps[i];
-              const fromAddress = await getAddress(step.start_location);
-              const toAddress = await getAddress(step.end_location);
+                const now = new Date();
 
-              if (step.travel_mode === "TRANSIT") {
-                const line = step.transit.line;
-                const vehicle = line.vehicle.type;
-                const shortName = line.short_name || line.name;
-                const departureTime = step.transit.departure_time?.text || "";
-                const arrivalTime = step.transit.arrival_time?.text || "";
+                steps.forEach((step, i) => {
+                    if (step.travel_mode === "TRANSIT") {
+                        const departure = step.transit.departure_time?.value;
+                        if (!departure) return;
 
-                transitHtml += `
+                        const departureTime = new Date(departure * 1000);
+                        const delay = departureTime - now;
+
+                        if (delay > 0) {
+                            setTimeout(() => {
+                                new Notification("SugboRide Reminder", {
+                                    body: `Step ${i + 1}: Ride ${step.transit.line.vehicle.type} (${step.transit.line.short_name || step.transit.line.name})`,
+                                });
+                            }, delay);
+                        }
+                    }
+
+                    if (step.travel_mode === "WALKING") {
+                        setTimeout(() => {
+                            new Notification("SugboRide Reminder", {
+                                body: `Step ${i + 1}: Walk for ${step.distance.text} (~${step.duration.text})`,
+                            });
+                        }, 0);
+                    }
+                });
+            }
+
+            initMap();
+
+            document.getElementById("planTrip").addEventListener("click", async () => {
+                const pointA = document.getElementById("pointA").value;
+                const pointB = document.getElementById("pointB").value;
+
+                if (!pointA || !pointB) {
+                    alert("Please enter both points.");
+                    return;
+                }
+
+                const request = {
+                    origin: pointA,
+                    destination: pointB,
+                    travelMode: google.maps.TravelMode.TRANSIT,
+                };
+
+                directionsService.route(request, async (result, status) => {
+                    if (status === "OK") {
+                        directionsRenderer.setDirections(result);
+
+                        const steps = result.routes[0].legs[0].steps;
+                        let transitHtml = "";
+
+                        for (let i = 0; i < steps.length; i++) {
+                            const step = steps[i];
+                            const fromAddress = await getAddress(step.start_location);
+                            const toAddress = await getAddress(step.end_location);
+
+                            if (step.travel_mode === "TRANSIT") {
+                                const line = step.transit.line;
+                                const vehicle = line.vehicle.type;
+                                const shortName = line.short_name || line.name;
+                                const departureTime = step.transit.departure_time?.text || "";
+                                const arrivalTime = step.transit.arrival_time?.text || "";
+
+                                transitHtml += `
                   <div class="mb-3 border-b border-gray-200 pb-2">
                     <p><span class="font-semibold">Step ${i + 1}:</span> Ride <span class="font-semibold">${vehicle}</span> (${shortName})</p>
                     <p><span class="font-semibold">Departure:</span> ${departureTime} | <span class="font-semibold">Arrival:</span> ${arrivalTime}</p>
@@ -206,36 +221,37 @@
                     <p><span class="font-semibold">To:</span> ${toAddress}</p>
                   </div>
                 `;
-              } else if (step.travel_mode === "WALKING") {
-                transitHtml += `
+                            } else if (step.travel_mode === "WALKING") {
+                                transitHtml += `
                   <div class="mb-3 border-b border-gray-200 pb-2">
                     <p><span class="font-semibold">Step ${i + 1}:</span> Walk for ${step.distance.text} (~${step.duration.text})</p>
                     <p><span class="font-semibold">From:</span> ${fromAddress}</p>
                     <p><span class="font-semibold">To:</span> ${toAddress}</p>
                   </div>
                 `;
-              }
-            }
+                            }
+                        }
 
-            document.getElementById("transitInfo").innerHTML = transitHtml || "<p>No transit steps needed for this route.</p>";
+                        document.getElementById("transitInfo").innerHTML = transitHtml || "<p>No transit steps needed for this route.</p>";
 
-            scheduleNotifications(steps);
-          } else {
-            alert("Could not calculate route. Please check your input.");
-          }
+                        scheduleNotifications(steps);
+                    } else {
+                        alert("Could not calculate route. Please check your input.");
+                    }
+                });
+            });
+
         });
-      });
 
-    });
-
-    if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('Service Worker registered', reg))
-      .catch(err => console.log('Service Worker registration failed:', err));
-  });
-}
-  </script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+    </script>
 
 </body>
+
 </html>

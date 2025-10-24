@@ -1,26 +1,38 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SugboRide</title>
-  <meta name="description" content="SugboRide helps you know when to ride public transport and when to depart — live location-aware PWA for the Philippines." />
+  <meta name="description"
+    content="SugboRide helps you know when to ride public transport and when to depart — live location-aware PWA for the Philippines." />
   <meta name="theme-color" content="#0ea5a4" />
   <link rel="icon" type="image/png" href="assets/Logo.png">
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Apple PWA support -->
+  <link rel="apple-touch-icon" href="assets/logo-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
-    .glass { background: rgba(255,255,255,0.6); backdrop-filter: blur(6px); }
+    .glass {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(6px);
+    }
   </style>
   <!-- Manifest -->
-<link rel="manifest" href="manifest.json">
-<!-- Favicon -->
-<link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="manifest" href="manifest.json">
+  <!-- Favicon -->
+  <link rel="icon" href="assets/logo.png" type="image/png">
 </head>
+
 <body class="bg-gradient-to-b from-sky-50 to-white text-slate-800 antialiased">
   <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
     <a href="#" class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyan-500 to-sky-600 flex items-center justify-center text-white font-bold">SR</div>
+      <div
+        class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyan-500 to-sky-600 flex items-center justify-center text-white font-bold">
+        SR</div>
       <div>
         <h1 class="text-lg font-semibold">SugboRide</h1>
         <p class="text-xs text-slate-500">Know when to ride. Know when to depart.</p>
@@ -42,21 +54,32 @@
     <section class="grid gap-8 md:grid-cols-2 items-center my-10">
       <div>
         <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Get to your ride on time — every time.</h2>
-        <p class="mt-4 text-slate-600">SugboRide is a lightweight PWA built for commuters in the Philippines. It uses your location to tell you the best time to leave, estimated arrival to the stop, and real-time alerts for departures.</p>
+        <p class="mt-4 text-slate-600">SugboRide is a lightweight PWA built for commuters in the Philippines. It uses
+          your location to tell you the best time to leave, estimated arrival to the stop, and real-time alerts for
+          departures.</p>
 
         <div class="mt-6 flex flex-wrap gap-3">
-          <a id="installBtn" href="./main.html" class="inline-flex items-center gap-3 bg-sky-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-sky-700">Install PWA</a>
-          <button id="checkLocation" class="inline-flex items-center gap-2 border border-slate-200 px-4 py-3 rounded-lg hover:bg-sky-50">Check my location</button>
+          <a id="installBtn" href="./main.html"
+            class="inline-flex items-center gap-3 bg-sky-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-sky-700">Install
+            PWA</a>
+          <button id="checkLocation"
+            class="inline-flex items-center gap-2 border border-slate-200 px-4 py-3 rounded-lg hover:bg-sky-50">Check my
+            location</button>
         </div>
 
         <ul class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-600">
-          <li class="flex items-start gap-3"><span class="text-sky-600 font-bold">•</span> Live location tracking (on request)</li>
-          <li class="flex items-start gap-3"><span class="text-sky-600 font-bold">•</span> Departure & arrival alerts</li>
-          <li class="flex items-start gap-3"><span class="text-sky-600 font-bold">•</span> Low-data, battery-friendly</li>
-          <li class="flex items-start gap-3"><span class="text-sky-600 font-bold">•</span> Works offline for cached routes</li>
+          <li class="flex items-start gap-3"><span class="text-sky-600 font-bold">•</span> Live location tracking (on
+            request)</li>
+          <li class="flex items-start gap-3"><span class="text-sky-600 font-bold">•</span> Departure & arrival alerts
+          </li>
+          <li class="flex items-start gap-3"><span class="text-sky-600 font-bold">•</span> Low-data, battery-friendly
+          </li>
+          <li class="flex items-start gap-3"><span class="text-sky-600 font-bold">•</span> Works offline for cached
+            routes</li>
         </ul>
 
-        <p class="mt-6 text-xs text-slate-400">We respect your privacy — location data stays on your device unless you choose to share it.</p>
+        <p class="mt-6 text-xs text-slate-400">We respect your privacy — location data stays on your device unless you
+          choose to share it.</p>
       </div>
 
       <div class="flex items-center justify-center">
@@ -92,32 +115,38 @@
       <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <article class="p-5 rounded-xl border border-slate-100 bg-white shadow-sm">
           <h4 class="font-semibold">Smart Departure Alerts</h4>
-          <p class="mt-2 text-sm text-slate-600">Receive punctual notifications telling you when to leave based on travel time and walking distance to the stop.</p>
+          <p class="mt-2 text-sm text-slate-600">Receive punctual notifications telling you when to leave based on
+            travel time and walking distance to the stop.</p>
         </article>
 
         <article class="p-5 rounded-xl border border-slate-100 bg-white shadow-sm">
           <h4 class="font-semibold">Live ETA</h4>
-          <p class="mt-2 text-sm text-slate-600">Track live estimates to the stop and updated arrival times for public utility vehicles.</p>
+          <p class="mt-2 text-sm text-slate-600">Track live estimates to the stop and updated arrival times for public
+            utility vehicles.</p>
         </article>
 
         <article class="p-5 rounded-xl border border-slate-100 bg-white shadow-sm">
           <h4 class="font-semibold">Offline Mode</h4>
-          <p class="mt-2 text-sm text-slate-600">Cached routes and schedules are available without cellular data — ideal for spotty connections.</p>
+          <p class="mt-2 text-sm text-slate-600">Cached routes and schedules are available without cellular data — ideal
+            for spotty connections.</p>
         </article>
 
         <article class="p-5 rounded-xl border border-slate-100 bg-white shadow-sm">
           <h4 class="font-semibold">Low Battery Usage</h4>
-          <p class="mt-2 text-sm text-slate-600">Designed to limit background location checks and preserve battery life.</p>
+          <p class="mt-2 text-sm text-slate-600">Designed to limit background location checks and preserve battery life.
+          </p>
         </article>
 
         <article class="p-5 rounded-xl border border-slate-100 bg-white shadow-sm">
           <h4 class="font-semibold">Local Routes (PH)</h4>
-          <p class="mt-2 text-sm text-slate-600">Preloaded common city routes and stops for major cities in the Philippines.</p>
+          <p class="mt-2 text-sm text-slate-600">Preloaded common city routes and stops for major cities in the
+            Philippines.</p>
         </article>
 
         <article class="p-5 rounded-xl border border-slate-100 bg-white shadow-sm">
           <h4 class="font-semibold">Privacy First</h4>
-          <p class="mt-2 text-sm text-slate-600">All sensitive data is kept locally by default. Share only when necessary.</p>
+          <p class="mt-2 text-sm text-slate-600">All sensitive data is kept locally by default. Share only when
+            necessary.</p>
         </article>
       </div>
     </section>
@@ -145,15 +174,18 @@
     <section id="contact" class="my-12 grid gap-6 md:grid-cols-2">
       <div class="p-6 bg-white rounded-xl border shadow-sm">
         <h4 class="font-semibold">Privacy-first by design</h4>
-        <p class="mt-2 text-sm text-slate-600">SugboRide keeps your location data on-device. You can export or delete local logs anytime from settings.</p>
+        <p class="mt-2 text-sm text-slate-600">SugboRide keeps your location data on-device. You can export or delete
+          local logs anytime from settings.</p>
       </div>
       <form id="contactForm" class="p-6 bg-white rounded-xl border shadow-sm">
         <h4 class="font-semibold">Contact / Feedback</h4>
         <p class="mt-2 text-sm text-slate-600">Send us feedback to improve routes, add cities, or report bugs.</p>
         <div class="mt-4 grid gap-3">
           <input id="name" name="name" placeholder="Your name" class="px-3 py-2 border rounded" required />
-          <input id="email" name="email" placeholder="Your email" class="px-3 py-2 border rounded" type="email" required />
-          <textarea id="message" name="message" placeholder="Message" class="px-3 py-2 border rounded h-24" required></textarea>
+          <input id="email" name="email" placeholder="Your email" class="px-3 py-2 border rounded" type="email"
+            required />
+          <textarea id="message" name="message" placeholder="Message" class="px-3 py-2 border rounded h-24"
+            required></textarea>
           <div class="flex items-center justify-between">
             <button type="submit" class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700">Send</button>
             <div class="text-xs text-slate-400">You'll receive a reply within 2 business days.</div>
@@ -178,11 +210,11 @@
   <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    (function(){
+    (function () {
       emailjs.init("8xMgDw0K4xKG0K1Af");
     })();
 
-    document.getElementById('contactForm').addEventListener('submit', function(event) {
+    document.getElementById('contactForm').addEventListener('submit', function (event) {
       event.preventDefault();
 
       const status = document.getElementById('statusMessage');
@@ -238,12 +270,13 @@
     });
 
     if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('Service Worker registered', reg))
-      .catch(err => console.log('Service Worker registration failed:', err));
-  });
-}
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registered', reg))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
   </script>
 </body>
+
 </html>
