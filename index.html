@@ -12,8 +12,10 @@
   <style>
     .glass { background: rgba(255,255,255,0.6); backdrop-filter: blur(6px); }
   </style>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/favicon.ico">
+  <!-- Manifest -->
+<link rel="manifest" href="manifest.json">
+<!-- Favicon -->
+<link rel="icon" href="assets/logo.png" type="image/png">
 </head>
 <body class="bg-gradient-to-b from-sky-50 to-white text-slate-800 antialiased">
   <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
@@ -234,6 +236,14 @@
         deferredPrompt = null;
       });
     });
+
+    if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('Service Worker registered', reg))
+      .catch(err => console.log('Service Worker registration failed:', err));
+  });
+}
   </script>
 </body>
 </html>

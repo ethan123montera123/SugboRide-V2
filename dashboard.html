@@ -3,16 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SugboRide</title>
+  <title>SugboRide — Trip Planner</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="assets/Logo.png">
   <meta name="theme-color" content="#1E40AF">
-  <script type="module" src="firebase-config.js"></script>
-  <script defer src="dashboard.js"></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Google Maps API with Places library -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places"></script>
+
+  <!-- Firebase Auth -->
+  <script type="module" src="auth.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
@@ -65,91 +70,98 @@
     &copy; 2025 SugboRide. All rights reserved.
   </footer>
 
-  <!-- Firebase Logout -->
+  <!-- Dashboard Scripts -->
   <script type="module">
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+    import { auth } from './auth.js';
+    import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-    const auth = getAuth();
+    window.addEventListener('DOMContentLoaded', () => {
 
-    document.getElementById("logout-btn").addEventListener("click", () => {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      }).catch((error) => {
-        alert("Error logging out: " + error.message);
-      });
-    });
-  </script>
-
-  <script>
-    let map, directionsService, directionsRenderer;
-    let autocompleteA, autocompleteB;
-    const geocoder = new google.maps.Geocoder();
-
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 10.3157, lng: 123.8854 },
-        zoom: 13,
+      // Redirect to login if user is not logged in
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = "main.html";
+        }
       });
 
-      directionsService = new google.maps.DirectionsService();
-      directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
-
-      autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { types: ["geocode"] });
-      autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { types: ["geocode"] });
-    }
-
-    async function getAddress(latLng) {
-      return new Promise((resolve) => {
-        geocoder.geocode({ location: latLng }, (results, status) => {
-          if (status === "OK" && results[0]) {
-            resolve(results[0].formatted_address);
-          } else {
-            resolve(`${latLng.lat().toFixed(5)}, ${latLng.lng().toFixed(5)}`);
-          }
+      // Logout button
+      const logoutBtn = document.getElementById("logout-btn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          signOut(auth)
+            .then(() => window.location.href = "main.html")
+            .catch((error) => alert("Error logging out: " + error.message));
         });
-      });
-    }
-
-    // Schedule live notifications
-    async function scheduleNotifications(steps) {
-      if (!("Notification" in window)) return;
-
-      if (Notification.permission !== "granted") {
-        await Notification.requestPermission();
       }
 
-      const now = new Date();
+      // ------------------------
+      // Google Maps & Trip Planner
+      // ------------------------
+      let map, directionsService, directionsRenderer;
+      let autocompleteA, autocompleteB;
+      const geocoder = new google.maps.Geocoder();
 
-      steps.forEach((step, i) => {
-        // Transit notifications
-        if (step.travel_mode === "TRANSIT") {
-          const departure = step.transit.departure_time?.value;
-          if (!departure) return;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 10.3157, lng: 123.8854 },
+          zoom: 13,
+        });
 
-          const departureTime = new Date(departure * 1000);
-          const delay = departureTime - now;
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
 
-          if (delay > 0) {
+        autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { types: ["geocode"] });
+        autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { types: ["geocode"] });
+      }
+
+      async function getAddress(latLng) {
+        return new Promise((resolve) => {
+          geocoder.geocode({ location: latLng }, (results, status) => {
+            if (status === "OK" && results[0]) {
+              resolve(results[0].formatted_address);
+            } else {
+              resolve(`${latLng.lat().toFixed(5)}, ${latLng.lng().toFixed(5)}`);
+            }
+          });
+        });
+      }
+
+      async function scheduleNotifications(steps) {
+        if (!("Notification" in window)) return;
+
+        if (Notification.permission !== "granted") {
+          await Notification.requestPermission();
+        }
+
+        const now = new Date();
+
+        steps.forEach((step, i) => {
+          if (step.travel_mode === "TRANSIT") {
+            const departure = step.transit.departure_time?.value;
+            if (!departure) return;
+
+            const departureTime = new Date(departure * 1000);
+            const delay = departureTime - now;
+
+            if (delay > 0) {
+              setTimeout(() => {
+                new Notification("SugboRide Reminder", {
+                  body: `Step ${i + 1}: Ride ${step.transit.line.vehicle.type} (${step.transit.line.short_name || step.transit.line.name})`,
+                });
+              }, delay);
+            }
+          }
+
+          if (step.travel_mode === "WALKING") {
             setTimeout(() => {
               new Notification("SugboRide Reminder", {
-                body: `Step ${i + 1}: Ride ${step.transit.line.vehicle.type} (${step.transit.line.short_name || step.transit.line.name})`,
+                body: `Step ${i + 1}: Walk for ${step.distance.text} (~${step.duration.text})`,
               });
-            }, delay);
+            }, 0);
           }
-        }
+        });
+      }
 
-        // Walking notifications
-        if (step.travel_mode === "WALKING") {
-          setTimeout(() => {
-            new Notification("SugboRide Reminder", {
-              body: `Step ${i + 1}: Walk for ${step.distance.text} (~${step.duration.text})`,
-            });
-          }, 0);
-        }
-      });
-    }
-
-    window.onload = () => {
       initMap();
 
       document.getElementById("planTrip").addEventListener("click", async () => {
@@ -176,7 +188,6 @@
 
             for (let i = 0; i < steps.length; i++) {
               const step = steps[i];
-
               const fromAddress = await getAddress(step.start_location);
               const toAddress = await getAddress(step.end_location);
 
@@ -208,14 +219,22 @@
 
             document.getElementById("transitInfo").innerHTML = transitHtml || "<p>No transit steps needed for this route.</p>";
 
-            // Schedule live notifications
             scheduleNotifications(steps);
           } else {
             alert("Could not calculate route. Please check your input.");
           }
         });
       });
-    };
+
+    });
+
+    if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('Service Worker registered', reg))
+      .catch(err => console.log('Service Worker registration failed:', err));
+  });
+}
   </script>
 
 </body>
