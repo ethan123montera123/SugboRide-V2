@@ -1,54 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SugboRide — Trip Planner</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SugboRide — Dashboard</title>
+
+  <!-- PWA / Theme -->
+  <meta name="theme-color" content="#2563EB" />
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#2563EB">
 
-  <!-- Favicon -->
+  <!-- Icons -->
   <link rel="icon" type="image/png" href="assets/favicon.png">
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Apple PWA support -->
   <link rel="apple-touch-icon" href="assets/logo-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- Google Maps API with Places & Visualization libraries -->
-  <script
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Maps JS (Places + Visualization) -->
+  <script defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places,visualization"></script>
 
-  <!-- Firebase Auth -->
-  <script type="module" src="auth.js"></script>
+  <!-- Firebase Auth helper -->
+  <script type="module" src="auth.js" defer></script>
+
+  <style>
+    .fade-in {
+      animation: fadeIn 260ms ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .transit-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .transit-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+    }
+  </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
-  <!-- Navbar -->
-  <nav class="w-full max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center px-6 py-4 relative gap-3 sm:gap-0">
+  <!-- NAVBAR -->
+  <nav class="w-full max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between px-6 py-4 gap-3 sm:gap-0">
     <div class="flex items-center gap-3">
-      <img src="assets/Logo.png" alt="Logo" class="w-10 h-10">
+      <img src="assets/Logo.png" alt="SugboRide" class="w-10 h-10 rounded-md">
       <span class="text-2xl font-bold text-blue-600">SugboRide</span>
     </div>
 
-    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 mt-2 sm:mt-0 w-full sm:w-auto">
-      <button id="logout-btn"
-        class="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600 transition font-medium shadow w-full sm:w-auto text-center">
-        Logout
-      </button>
-
+    <div class="flex items-center gap-3 w-full sm:w-auto">
       <div class="relative w-full sm:w-auto">
         <button id="historyBtn"
-          class="bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 transition shadow font-medium w-full text-center">
-          History
+          class="bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 transition shadow font-medium w-full sm:w-auto text-center">History
         </button>
         <div id="historyDropdown"
-          class="absolute right-0 mt-2 w-full sm:w-60 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hidden z-50">
+          class="absolute right-0 mt-2 w-full sm:w-80 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hidden z-50">
           <p class="text-gray-400 p-3 text-sm">No recent trips yet.</p>
         </div>
       </div>
@@ -57,47 +78,60 @@
         class="bg-yellow-100 px-4 py-2 rounded-full hover:bg-yellow-200 transition shadow font-medium w-full sm:w-auto text-center">
         Traffic Off
       </button>
+
+      <button id="logout-btn"
+        class="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600 transition font-medium shadow w-full sm:w-auto">
+        Logout
+      </button>
     </div>
   </nav>
 
-  <!-- Trip Planner Card -->
-  <div class="w-full max-w-4xl mx-auto mt-6 bg-white rounded-3xl shadow-md p-6 flex flex-col md:flex-row gap-4">
-    <div class="flex-1 flex flex-col gap-2">
-      <label for="pointA" class="text-gray-700 font-medium">Starting Point</label>
-      <input id="pointA" type="text" placeholder="Enter starting point"
-        class="p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full transition duration-200">
-    </div>
-    <div class="flex-1 flex flex-col gap-2">
-      <label for="pointB" class="text-gray-700 font-medium">Destination</label>
-      <input id="pointB" type="text" placeholder="Enter destination"
-        class="p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full transition duration-200">
-    </div>
-    <button id="planTrip"
-      class="mt-4 md:mt-0 bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-600 shadow transition duration-200 font-medium">Plan
-      Trip</button>
-  </div>
+  <!-- TRIP PLANNER CARD -->
+  <main class="w-full max-w-7xl mx-auto mt-6 px-4 lg:px-0 flex-1">
+    <section class="bg-white rounded-3xl shadow-md p-6 transition-all duration-200">
+      <div class="flex flex-col lg:flex-row gap-4">
+        <div class="flex-1 flex flex-col gap-2">
+          <label for="pointA" class="text-gray-700 font-medium">Starting Point</label>
+          <input id="pointA" type="text" placeholder="Enter starting point"
+            class="p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full transition duration-200">
+        </div>
 
-  <!-- Map and Transit Info -->
-  <div class="flex flex-col lg:flex-row w-full max-w-7xl mx-auto gap-6 mt-6 px-2 lg:px-0">
+        <div class="flex-1 flex flex-col gap-2">
+          <label for="pointB" class="text-gray-700 font-medium">Destination</label>
+          <input id="pointB" type="text" placeholder="Enter destination"
+            class="p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full transition duration-200">
+        </div>
 
-    <div class="lg:w-2/3 w-full bg-white rounded-3xl shadow-md overflow-hidden">
-      <div id="map" class="w-full h-96 lg:h-[500px]"></div>
-    </div>
-
-    <div
-      class="lg:w-1/3 w-full bg-white rounded-3xl shadow-md p-6 flex flex-col gap-3 max-h-[500px] overflow-y-auto">
-      <h2 class="text-xl font-semibold text-gray-800 mb-2 border-b border-gray-200 pb-2">Trip Details</h2>
-      <div id="transitInfo" class="text-gray-700 text-sm">
-        <p class="text-gray-400">Suggested route steps will appear here after planning your trip.</p>
+        <div class="flex items-end">
+          <button id="planTrip"
+            class="bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-600 shadow transition duration-200 font-medium">Plan
+            Trip</button>
+        </div>
       </div>
+    </section>
+
+    <!-- MAP + TRANSIT/PANEL -->
+    <div class="flex flex-col lg:flex-row gap-6 mt-6">
+      <div class="lg:w-2/3 w-full bg-white rounded-3xl shadow-md overflow-hidden">
+        <div id="map" class="w-full h-96 lg:h-[560px]"></div>
+      </div>
+
+      <aside
+        class="lg:w-1/3 w-full bg-white rounded-3xl shadow-md p-6 flex flex-col gap-3 max-h-[560px] overflow-y-auto transit-scroll">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2 border-b border-gray-200 pb-2">Trip Details</h2>
+        <div id="transitInfo" class="text-gray-700 text-sm">
+          <p class="text-gray-400">Suggested route steps will appear here after planning your trip.</p>
+        </div>
+      </aside>
     </div>
+  </main>
 
-  </div>
-
-  <footer class="p-4 text-center text-gray-400 text-sm mt-auto">
+  <!-- FOOTER -->
+  <footer class="p-4 text-center text-gray-400 text-sm mt-6">
     &copy; 2025 SugboRide. All rights reserved.
   </footer>
 
+  <!-- SCRIPT -->
   <script type="module">
     import { auth } from './auth.js';
     import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
@@ -105,212 +139,198 @@
     const historyBtn = document.getElementById("historyBtn");
     const historyDropdown = document.getElementById("historyDropdown");
     const trafficBtn = document.getElementById("trafficToggle");
+    const logoutBtn = document.getElementById("logout-btn");
+    const planTripBtn = document.getElementById("planTrip");
+    const transitInfo = document.getElementById("transitInfo");
+
+    let map, directionsService, directionsRenderer, trafficLayer;
+    let autocompleteA, autocompleteB;
+    const geocoder = new google.maps.Geocoder();
+    let trafficOn = false;
+    let allRoutes = [];
+    let selectedRouteIndex = null;
+    let lastResult = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       onAuthStateChanged(auth, (user) => {
         if (!user) window.location.href = "main.html";
       });
 
-      document.getElementById("logout-btn")?.addEventListener("click", () => {
-        signOut(auth).then(() => window.location.href = "main.html")
-          .catch(err => alert("Error logging out: " + err.message));
-      });
-
-      // -----------------------------
-      // Map & Planner
-      // -----------------------------
-      let map, directionsService, directionsRenderer, trafficLayer;
-      let autocompleteA, autocompleteB;
-      const geocoder = new google.maps.Geocoder();
-      let trafficOn = false;
-
-      function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: 10.3157, lng: 123.8854 },
-          zoom: 13,
-        });
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
-        autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { types: ["geocode"] });
-        autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { types: ["geocode"] });
-        trafficLayer = new google.maps.TrafficLayer();
-        renderHistory();
-      }
-
-      trafficBtn.addEventListener("click", () => {
-        trafficOn = !trafficOn;
-        trafficLayer.setMap(trafficOn ? map : null);
-        trafficBtn.innerText = trafficOn ? "Traffic On" : "Traffic Off";
-      });
-
-      async function getAddress(latLng) {
-        return new Promise(resolve => {
-          geocoder.geocode({ location: latLng }, (results, status) => {
-            resolve((status === "OK" && results[0]) ? results[0].formatted_address :
-              `${latLng.lat().toFixed(5)}, ${latLng.lng().toFixed(5)}`);
-          });
-        });
-      }
-
-      async function scheduleNotifications(steps) {
-        if (!("Notification" in window)) return;
-        if (Notification.permission !== "granted") await Notification.requestPermission();
-        const now = new Date();
-        steps.forEach((step, i) => {
-          if (step.travel_mode === "TRANSIT") {
-            const dep = step.transit.departure_time?.value;
-            if (!dep) return;
-            const delay = new Date(dep * 1000) - now;
-            if (delay > 0) {
-              setTimeout(() => new Notification("SugboRide Reminder", {
-                body: `Step ${i + 1}: Ride ${step.transit.line.vehicle.type} (${step.transit.line.short_name || step.transit.line.name})`
-              }), delay);
-            }
-          }
-        });
-      }
-
-      // -----------------------------
-      // Fares
-      // -----------------------------
-      const fareRates = {
-        "JEEPNEY": { regular: [10, 15], student: [8, 12], pwd: [5, 10] },
-        "BUS": { regular: [12, 20], student: [10, 16], pwd: [6, 12] }
-      };
-
-      function getFareInfo(vehicleType) {
-        vehicleType = vehicleType.toUpperCase();
-        const fares = fareRates[vehicleType] || null;
-        if (!fares) return "<p>Fare info not available</p>";
-        return `
-          <p>Fare (Regular): ₱${fares.regular[0]} - ₱${fares.regular[1]}</p>
-          <p>Fare (Student): ₱${fares.student[0]} - ₱${fares.student[1]}</p>
-          <p>Fare (PWD): ₱${fares.pwd[0]} - ₱${fares.pwd[1]}</p>
-        `;
-      }
-
-      // -----------------------------
-      // History
-      // -----------------------------
-      function saveHistory(origin, destination) {
-        let history = JSON.parse(localStorage.getItem("tripHistory") || "[]");
-        if (!history.find(item => item.origin === origin && item.destination === destination)) {
-          history.unshift({ origin, destination });
-          if (history.length > 5) history.pop();
-          localStorage.setItem("tripHistory", JSON.stringify(history));
-          renderHistory();
-        }
-      }
-
-      function renderHistory() {
-        const history = JSON.parse(localStorage.getItem("tripHistory") || "[]");
-        historyDropdown.innerHTML = "";
-        if (history.length === 0) {
-          historyDropdown.innerHTML = '<p class="text-gray-400 p-3 text-sm">No recent trips yet.</p>';
-          return;
-        }
-        history.forEach((item) => {
-          const btn = document.createElement("button");
-          btn.className = "w-full text-left p-3 hover:bg-gray-100 transition text-gray-700";
-          btn.innerText = `${item.origin} → ${item.destination}`;
-          btn.addEventListener("click", () => {
-            document.getElementById("pointA").value = item.origin;
-            document.getElementById("pointB").value = item.destination;
-            document.getElementById("planTrip").click();
-            historyDropdown.classList.add("hidden");
-          });
-          historyDropdown.appendChild(btn);
-        });
-      }
-
-      historyBtn.addEventListener("click", () => historyDropdown.classList.toggle("hidden"));
-      window.addEventListener("click", (e) => {
-        if (!historyBtn.contains(e.target) && !historyDropdown.contains(e.target)) historyDropdown.classList.add("hidden");
+      logoutBtn.addEventListener('click', () => {
+        signOut(auth).then(() => window.location.href = "main.html");
       });
 
       initMap();
+      renderHistory();
+    });
 
-      // -----------------------------
-      // Plan Trip
-      // -----------------------------
-      document.getElementById("planTrip").addEventListener("click", async () => {
-        const pointA = document.getElementById("pointA").value;
-        const pointB = document.getElementById("pointB").value;
-        if (!pointA || !pointB) return alert("Please enter both points.");
-
-        saveHistory(pointA, pointB);
-        const request = { origin: pointA, destination: pointB, travelMode: google.maps.TravelMode.TRANSIT };
-        directionsService.route(request, async (result, status) => {
-          if (status === "OK") {
-            directionsRenderer.setDirections(result);
-            const steps = result.routes[0].legs[0].steps;
-            let transitHtml = "";
-
-            for (let i = 0; i < steps.length; i++) {
-              const step = steps[i];
-              const from = await getAddress(step.start_location);
-              const to = await getAddress(step.end_location);
-              const stepId = `step-${i}`;
-
-              if (step.travel_mode === "TRANSIT") {
-                const line = step.transit.line;
-                const vehicleType = line.vehicle.type;
-                const fareHtml = getFareInfo(vehicleType);
-
-                let routeInfo = "";
-                if (vehicleType.toUpperCase() === "BUS") {
-                  routeInfo = `
-                    <p>Board at: ${from}</p>
-                    <p>Get off at: ${to}</p>
-                    <p>Route/Bus No: ${line.short_name || line.name}</p>
-                  `;
-                }
-
-                transitHtml += `
-                  <div class="bg-blue-50 rounded-xl p-3 mb-2 shadow-sm">
-                    <div class="flex justify-between items-center">
-                      <span class="font-medium text-blue-600">Step ${i + 1}: Ride ${vehicleType} (${line.short_name || line.name})</span>
-                      <span class="text-sm text-gray-700">₱${fareRates[vehicleType.toUpperCase()]?.regular[0]} - ₱${fareRates[vehicleType.toUpperCase()]?.regular[1]}</span>
-                    </div>
-                    <div id="${stepId}" class="mt-2 text-gray-700 text-sm">
-                      <p>Departure: ${step.transit.departure_time?.text || ''} | Arrival: ${step.transit.arrival_time?.text || ''}</p>
-                      ${routeInfo}
-                      <div class="mt-1 text-gray-600 text-sm">${fareHtml}</div>
-                    </div>
-                  </div>`;
-              } else if (step.travel_mode === "WALKING") {
-                transitHtml += `
-                  <div class="bg-green-50 rounded-xl p-3 mb-2 shadow-sm">
-                    <button class="w-full text-left font-medium text-green-600 focus:outline-none" onclick="document.getElementById('${stepId}').classList.toggle('hidden')">
-                      Step ${i + 1}: Walk for ${step.distance.text} (~${step.duration.text})
-                    </button>
-                    <div id="${stepId}" class="hidden mt-2 text-gray-700 text-sm">
-                      <p>From: ${from}</p>
-                      <p>To: ${to}</p>
-                    </div>
-                  </div>`;
-              }
-            }
-
-            document.getElementById("transitInfo").innerHTML = transitHtml || "<p class='text-gray-400'>No transit steps needed for this route.</p>";
-            scheduleNotifications(steps);
-          } else {
-            alert("Could not calculate route. Please check your input.");
-          }
-        });
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 10.3157, lng: 123.8854 },
+        zoom: 13,
       });
 
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+      autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"));
+      autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"));
+      trafficLayer = new google.maps.TrafficLayer();
+    }
+
+    function saveHistory(origin, destination) {
+      const history = JSON.parse(localStorage.getItem("tripHistory") || "[]");
+      if (!history.find(h => h.origin === origin && h.destination === destination)) {
+        history.unshift({ origin, destination, ts: Date.now() });
+        if (history.length > 6) history.pop();
+        localStorage.setItem("tripHistory", JSON.stringify(history));
+        renderHistory();
+      }
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem("tripHistory") || "[]");
+      historyDropdown.innerHTML = "";
+      if (!history.length) {
+        historyDropdown.innerHTML = '<p class="text-gray-400 p-3 text-sm">No recent trips yet.</p>';
+        return;
+      }
+      history.forEach((h) => {
+        const btn = document.createElement("button");
+        btn.className = "w-full text-left p-3 hover:bg-gray-100 transition text-gray-700";
+        btn.innerText = `${h.origin} → ${h.destination}`;
+        btn.addEventListener("click", () => {
+          document.getElementById("pointA").value = h.origin;
+          document.getElementById("pointB").value = h.destination;
+          planTripBtn.click();
+          historyDropdown.classList.add("hidden");
+        });
+        historyDropdown.appendChild(btn);
+      });
+    }
+
+    historyBtn.addEventListener("click", (e) => {
+      historyDropdown.classList.toggle("hidden");
+      e.stopPropagation();
     });
+    window.addEventListener("click", (e) => {
+      if (!historyBtn.contains(e.target) && !historyDropdown.contains(e.target)) historyDropdown.classList.add("hidden");
+    });
+
+    trafficBtn.addEventListener("click", () => {
+      trafficOn = !trafficOn;
+      trafficLayer.setMap(trafficOn ? map : null);
+      trafficBtn.innerText = trafficOn ? "Traffic On" : "Traffic Off";
+    });
+
+    planTripBtn.addEventListener("click", () => {
+      const pointA = document.getElementById("pointA").value.trim();
+      const pointB = document.getElementById("pointB").value.trim();
+      if (!pointA || !pointB) return alert("Please enter both starting point and destination.");
+
+      saveHistory(pointA, pointB);
+
+      const request = {
+        origin: pointA,
+        destination: pointB,
+        travelMode: google.maps.TravelMode.TRANSIT,
+        provideRouteAlternatives: true
+      };
+
+      directionsService.route(request, (result, status) => {
+        if (status === "OK") {
+          lastResult = result;
+          allRoutes = result.routes;
+
+          if (!allRoutes.length) {
+            transitInfo.innerHTML = "<p class='text-gray-400'>No routes found for that trip.</p>";
+            return;
+          }
+
+          renderRouteList();
+          directionsRenderer.setDirections(result);
+          directionsRenderer.setRouteIndex(0);
+        } else {
+          alert("Could not calculate route. Please check your input.");
+        }
+      });
+    });
+
+    function renderRouteList() {
+      let listHtml = `<h3 class="text-lg font-semibold mb-3">Choose a Route</h3>`;
+      allRoutes.forEach((route, idx) => {
+        const leg = route.legs[0];
+        listHtml += `
+          <div class="border rounded-xl p-3 mb-3 hover:bg-blue-50 transition fade-in">
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="font-medium text-blue-700">Route ${idx + 1}</div>
+                <div class="text-sm text-gray-600">Duration: ${leg.duration.text} • Distance: ${leg.distance.text}</div>
+              </div>
+              <div class="text-right">
+                <button class="select-route inline-block bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600" data-index="${idx}">Select</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      transitInfo.innerHTML = listHtml;
+
+      document.querySelectorAll('.select-route').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.currentTarget.getAttribute('data-index'), 10);
+          selectRoute(idx);
+        });
+      });
+    }
+
+    function selectRoute(index) {
+      selectedRouteIndex = index;
+      directionsRenderer.setDirections(lastResult);
+      directionsRenderer.setRouteIndex(index);
+
+      transitInfo.innerHTML = `
+        <div class="text-center py-6 space-x-3">
+          <p class="text-lg font-semibold mb-3 text-gray-700">You selected Route ${index + 1}</p>
+          <div>
+            <button id="backToRoutesBtn" class="bg-gray-300 text-gray-800 px-5 py-3 rounded-2xl hover:bg-gray-400 transition">Back</button>
+            <button id="startTripBtn" class="bg-green-500 text-white px-6 py-3 rounded-2xl hover:bg-green-600 transition">Start Trip</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("startTripBtn").addEventListener("click", showTripDetails);
+      document.getElementById("backToRoutesBtn").addEventListener("click", renderRouteList);
+    }
+
+    async function showTripDetails() {
+      if (selectedRouteIndex == null || !allRoutes[selectedRouteIndex]) {
+        return alert("No route selected.");
+      }
+
+      const steps = allRoutes[selectedRouteIndex].legs[0].steps;
+      let html = `<h3 class="text-lg font-semibold mb-3">Trip Steps</h3>`;
+
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        html += `
+          <div class="rounded-xl p-3 mb-3 border">
+            <div class="font-medium">${step.instructions}</div>
+            <div class="text-sm text-gray-600">${step.distance?.text || ''} • ${step.duration?.text || ''}</div>
+          </div>
+        `;
+      }
+
+      transitInfo.innerHTML = html;
+    }
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('Service Worker registered', reg))
+          .then(reg => console.log('Service Worker registered:', reg))
           .catch(err => console.log('Service Worker registration failed:', err));
       });
     }
   </script>
-
 </body>
 
 </html>
