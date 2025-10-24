@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SugboRide — Trip Planner</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1E40AF">
+  <script type="module" src="firebase-config.js"></script>
+  <script defer src="dashboard.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Maps API with Places library -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Floating Navbar -->
+  <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-6xl bg-white/80 backdrop-blur-md shadow-2xl flex justify-between items-center px-6 py-3 z-50 rounded-xl">
+    <div class="flex items-center gap-2">
+      <img src="assets/Logo.png" alt="Logo" class="w-8 h-8">
+      <span class="text-xl font-semibold text-blue-700">SugboRide</span>
+    </div>
+    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition">Logout</button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 mt-24 flex flex-col gap-6 px-4">
+
+    <!-- Trip Planner Form -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 w-full flex flex-col sm:flex-row gap-4 items-center max-w-6xl mx-auto">
+      <div class="flex-1 flex flex-col gap-2">
+        <label for="pointA" class="text-gray-700 font-semibold">Starting Point</label>
+        <input id="pointA" type="text" placeholder="Enter starting point" class="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+      </div>
+      <div class="flex-1 flex flex-col gap-2">
+        <label for="pointB" class="text-gray-700 font-semibold">Destination</label>
+        <input id="pointB" type="text" placeholder="Enter destination" class="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+      </div>
+      <button id="planTrip" class="mt-4 sm:mt-0 bg-blue-500 text-white px-6 py-3 rounded-2xl shadow hover:bg-blue-600 transition flex-shrink-0">Plan Trip</button>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="flex flex-col lg:flex-row gap-6 w-full max-w-6xl mx-auto">
+
+      <!-- Left Column: Google Maps -->
+      <div class="lg:w-2/3 w-full bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div id="map" class="w-full h-[500px]"></div>
+      </div>
+
+      <!-- Right Column: Public Transportation -->
+      <div class="lg:w-1/3 w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-4">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">Public Transportation</h2>
+        <div id="transitInfo" class="text-gray-700 overflow-y-auto max-h-[500px]">
+          <p>Suggested jeepney/bus numbers will appear here after planning your trip.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Directions Card -->
+    <div id="directions" class="bg-white rounded-2xl shadow-lg p-6 w-full max-w-6xl mx-auto text-gray-700">
+      <h2 class="text-lg font-semibold mb-2">Route Directions will appear here</h2>
+    </div>
+
+  </main>
+
+  <footer class="p-4 text-center text-gray-400 text-sm mt-auto">
+    &copy; 2025 SugboRide. All rights reserved.
+  </footer>
+
+  <script>
+    let map, directionsService, directionsRenderer;
+    let autocompleteA, autocompleteB;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 10.3157, lng: 123.8854 }, // Cebu City
+        zoom: 13,
+      });
+
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+
+      // Autocomplete
+      autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { types: ["geocode"] });
+      autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { types: ["geocode"] });
+    }
+
+    window.onload = () => {
+      initMap();
+
+      document.getElementById("planTrip").addEventListener("click", () => {
+        const pointA = document.getElementById("pointA").value;
+        const pointB = document.getElementById("pointB").value;
+
+        if (!pointA || !pointB) {
+          alert("Please enter both points.");
+          return;
+        }
+
+        const request = {
+          origin: pointA,
+          destination: pointB,
+          travelMode: google.maps.TravelMode.TRANSIT,
+        };
+
+        directionsService.route(request, (result, status) => {
+          if (status === "OK") {
+            directionsRenderer.setDirections(result);
+
+            // Display step-by-step directions
+            const steps = result.routes[0].legs[0].steps;
+            let directionsHtml = "<ol class='list-decimal pl-5'>";
+            let transitHtml = "";
+
+            steps.forEach((step) => {
+              directionsHtml += `<li class="mb-1">${step.instructions}</li>`;
+
+              // If the step is public transit, show jeepney/bus info
+              if (step.travel_mode === "TRANSIT") {
+                const line = step.transit.line;
+                const vehicle = line.vehicle.type; // BUS, TRAM, SUBWAY, etc.
+                const shortName = line.short_name || line.name;
+                transitHtml += `<p class="mb-1"><span class="font-semibold">${vehicle}:</span> ${shortName}</p>`;
+              }
+            });
+
+            directionsHtml += "</ol>";
+            document.getElementById("directions").innerHTML = directionsHtml;
+            document.getElementById("transitInfo").innerHTML = transitHtml || "<p>No transit needed for this route.</p>";
+          } else {
+            alert("Could not calculate route. Please check your input.");
+          }
+        });
+      });
+    };
+  </script>
+
+</body>
+</html>

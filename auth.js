@@ -24,9 +24,9 @@ document.getElementById('login-btn').addEventListener('click', () => {
 
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      alert("Logged in successfully!");
       console.log(userCredential.user);
-      // Redirect or dashboard logic here
+      // Redirect to dashboard
+      window.location.href = "dashboard.html";
     })
     .catch((error) => alert(error.message));
 });
@@ -39,9 +39,10 @@ document.getElementById('signup-btn').addEventListener('click', () => {
 
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      alert("Account created successfully!");
       console.log(userCredential.user);
-      // You can save name and age to Firestore/Realtime DB here
+      // Save name and other info to Realtime Database if needed
+      // Redirect to dashboard
+      window.location.href = "dashboard.html";
     })
     .catch((error) => alert(error.message));
 });
@@ -49,12 +50,18 @@ document.getElementById('signup-btn').addEventListener('click', () => {
 // Google Login / Signup
 document.getElementById('google-login').addEventListener('click', () => {
   signInWithPopup(auth, provider)
-    .then((result) => alert("Logged in with Google!"))
+    .then((result) => {
+      console.log(result.user);
+      window.location.href = "dashboard.html";
+    })
     .catch((error) => alert(error.message));
 });
 
 document.getElementById('google-signup').addEventListener('click', () => {
   signInWithPopup(auth, provider)
-    .then((result) => alert("Signed up with Google!"))
+    .then((result) => {
+      console.log(result.user);
+      window.location.href = "dashboard.html";
+    })
     .catch((error) => alert(error.message));
 });
