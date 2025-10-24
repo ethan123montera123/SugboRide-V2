@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SugboRide — Login / Signup</title>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .tab-active { border-bottom: 3px solid #6366F1; font-weight: 700; }
+    .tab-inactive { border-bottom: 3px solid transparent; font-weight: 500; }
+    .form-transition { transition: all 0.5s ease-in-out; }
+    .form-hidden { opacity: 0; transform: translateX(50px); pointer-events: none; position: absolute; width: 100%; }
+    .form-visible { opacity: 1; transform: translateX(0); pointer-events: all; position: relative; width: 100%; }
+    .form-container { transition: height 0.5s ease-in-out; }
+    .password-container { position: relative; }
+    .toggle-password { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6366F1; }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-pink-50 via-blue-50 to-purple-50 min-h-screen flex items-center justify-center p-4">
+
+  <div class="bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl w-full max-w-md p-8 sm:p-10">
+    <h1 class="text-4xl font-bold text-gray-800 text-center mb-6">SugboRide</h1>
+
+    <!-- Tabs -->
+    <div class="flex justify-around mb-6 border-b border-gray-200">
+      <button id="login-tab" class="tab-active py-2 px-4 text-gray-700 text-lg transition">Login</button>
+      <button id="signup-tab" class="tab-inactive py-2 px-4 text-gray-500 text-lg transition">Signup</button>
+    </div>
+
+    <!-- Forms Container -->
+    <div id="forms-container" class="form-container relative">
+      <!-- Login Form -->
+      <div id="login-form" class="form-transition form-visible">
+        <input id="login-email" type="email" placeholder="Email" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+
+        <div class="password-container mb-4">
+          <input id="login-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+          <span id="toggle-login-password" class="toggle-password select-none">👁️</span>
+        </div>
+
+        <button id="login-btn" class="w-full p-4 bg-indigo-400 text-white font-semibold rounded-xl hover:bg-indigo-500 shadow-lg transition text-base">Login</button>
+        <div class="text-center my-4 text-gray-400 text-sm">or</div>
+        <button id="google-login" class="w-full p-4 bg-red-400 text-white font-semibold rounded-xl hover:bg-red-500 shadow-lg transition text-base">Login with Google</button>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="signup-form" class="form-transition form-hidden">
+        <input id="signup-name" type="text" placeholder="Full Name" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+        <input id="signup-email" type="email" placeholder="Email" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+
+        <div class="password-container mb-4">
+          <input id="signup-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+          <span id="toggle-signup-password" class="toggle-password select-none">👁️</span>
+        </div>
+
+        <input id="signup-age" type="number" placeholder="Age" class="w-full p-4 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 shadow-sm text-base">
+        <button id="signup-btn" class="w-full p-4 bg-purple-400 text-white font-semibold rounded-xl hover:bg-purple-500 shadow-lg transition text-base">Signup</button>
+        <div class="text-center my-4 text-gray-400 text-sm">or</div>
+        <button id="google-signup" class="w-full p-4 bg-red-400 text-white font-semibold rounded-xl hover:bg-red-500 shadow-lg transition text-base">Signup with Google</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js" type="module"></script>
+  <script>
+    const loginTab = document.getElementById('login-tab');
+    const signupTab = document.getElementById('signup-tab');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const formsContainer = document.getElementById('forms-container');
+
+    function updateContainerHeight() {
+      const activeForm = loginForm.classList.contains('form-visible') ? loginForm : signupForm;
+      formsContainer.style.height = activeForm.offsetHeight + 'px';
+    }
+
+    window.addEventListener('load', updateContainerHeight);
+
+    loginTab.addEventListener('click', () => {
+      loginForm.classList.remove('form-hidden'); loginForm.classList.add('form-visible');
+      signupForm.classList.remove('form-visible'); signupForm.classList.add('form-hidden');
+      loginTab.classList.add('tab-active'); loginTab.classList.remove('tab-inactive');
+      signupTab.classList.add('tab-inactive'); signupTab.classList.remove('tab-active');
+      updateContainerHeight();
+    });
+
+    signupTab.addEventListener('click', () => {
+      signupForm.classList.remove('form-hidden'); signupForm.classList.add('form-visible');
+      loginForm.classList.remove('form-visible'); loginForm.classList.add('form-hidden');
+      signupTab.classList.add('tab-active'); signupTab.classList.remove('tab-inactive');
+      loginTab.classList.add('tab-inactive'); loginTab.classList.remove('tab-active');
+      updateContainerHeight();
+    });
+
+    // Show/Hide password toggle
+    const toggleLoginPassword = document.getElementById('toggle-login-password');
+    const loginPasswordInput = document.getElementById('login-password');
+
+    toggleLoginPassword.addEventListener('click', () => {
+      loginPasswordInput.type = loginPasswordInput.type === 'password' ? 'text' : 'password';
+    });
+
+    const toggleSignupPassword = document.getElementById('toggle-signup-password');
+    const signupPasswordInput = document.getElementById('signup-password');
+
+    toggleSignupPassword.addEventListener('click', () => {
+      signupPasswordInput.type = signupPasswordInput.type === 'password' ? 'text' : 'password';
+    });
+
+    window.addEventListener('resize', updateContainerHeight);
+  </script>
+</body>
+</html>
