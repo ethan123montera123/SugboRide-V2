@@ -16,14 +16,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- Tailwind CDN -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Maps JS (Places + Visualization) -->
+  <!-- Google Maps -->
   <script defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places,visualization"></script>
 
-  <!-- Firebase Auth helper -->
+  <!-- Firebase -->
   <script type="module" src="auth.js" defer></script>
 
   <style>
@@ -34,7 +34,7 @@
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(8px);
       }
 
       to {
@@ -64,15 +64,10 @@
     </div>
 
     <div class="flex items-center gap-3 w-full sm:w-auto">
-      <div class="relative w-full sm:w-auto">
-        <button id="historyBtn"
-          class="bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 transition shadow font-medium w-full sm:w-auto text-center">History
-        </button>
-        <div id="historyDropdown"
-          class="absolute right-0 mt-2 w-full sm:w-80 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hidden z-50">
-          <p class="text-gray-400 p-3 text-sm">No recent trips yet.</p>
-        </div>
-      </div>
+      <button id="historyBtn"
+        class="bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 transition shadow font-medium w-full sm:w-auto text-center">
+        History
+      </button>
 
       <button id="trafficToggle"
         class="bg-yellow-100 px-4 py-2 rounded-full hover:bg-yellow-200 transition shadow font-medium w-full sm:w-auto text-center">
@@ -110,7 +105,7 @@
       </div>
     </section>
 
-    <!-- MAP + TRANSIT/PANEL -->
+    <!-- MAP + DETAILS -->
     <div class="flex flex-col lg:flex-row gap-6 mt-6">
       <div class="lg:w-2/3 w-full bg-white rounded-3xl shadow-md overflow-hidden">
         <div id="map" class="w-full h-96 lg:h-[560px]"></div>
@@ -131,13 +126,27 @@
     &copy; 2025 SugboRide. All rights reserved.
   </footer>
 
+  <!-- HISTORY MODAL -->
+  <div id="historyModal"
+    class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition duration-300">
+    <div
+      class="bg-white w-11/12 max-w-md rounded-2xl shadow-xl p-5 relative fade-in max-h-[80vh] overflow-y-auto transit-scroll">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Trip History</h3>
+      <div id="historyList" class="space-y-2"></div>
+      <button id="closeHistory"
+        class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl font-bold">&times;</button>
+    </div>
+  </div>
+
   <!-- SCRIPT -->
   <script type="module">
     import { auth } from './auth.js';
     import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
     const historyBtn = document.getElementById("historyBtn");
-    const historyDropdown = document.getElementById("historyDropdown");
+    const historyModal = document.getElementById("historyModal");
+    const historyList = document.getElementById("historyList");
+    const closeHistory = document.getElementById("closeHistory");
     const trafficBtn = document.getElementById("trafficToggle");
     const logoutBtn = document.getElementById("logout-btn");
     const planTripBtn = document.getElementById("planTrip");
@@ -164,12 +173,12 @@
       renderHistory();
     });
 
+    // Initialize Map
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 10.3157, lng: 123.8854 },
         zoom: 13,
       });
-
       directionsService = new google.maps.DirectionsService();
       directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
       autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"));
@@ -177,6 +186,7 @@
       trafficLayer = new google.maps.TrafficLayer();
     }
 
+    // Save History
     function saveHistory(origin, destination) {
       const history = JSON.parse(localStorage.getItem("tripHistory") || "[]");
       if (!history.find(h => h.origin === origin && h.destination === destination)) {
@@ -187,41 +197,53 @@
       }
     }
 
+    // Render History
     function renderHistory() {
       const history = JSON.parse(localStorage.getItem("tripHistory") || "[]");
-      historyDropdown.innerHTML = "";
+      historyList.innerHTML = "";
       if (!history.length) {
-        historyDropdown.innerHTML = '<p class="text-gray-400 p-3 text-sm">No recent trips yet.</p>';
+        historyList.innerHTML = '<p class="text-gray-400 text-center py-3">No recent trips yet.</p>';
         return;
       }
       history.forEach((h) => {
         const btn = document.createElement("button");
-        btn.className = "w-full text-left p-3 hover:bg-gray-100 transition text-gray-700";
+        btn.className = "w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition text-gray-700";
         btn.innerText = `${h.origin} → ${h.destination}`;
         btn.addEventListener("click", () => {
           document.getElementById("pointA").value = h.origin;
           document.getElementById("pointB").value = h.destination;
           planTripBtn.click();
-          historyDropdown.classList.add("hidden");
+          closeModal();
         });
-        historyDropdown.appendChild(btn);
+        historyList.appendChild(btn);
       });
     }
 
-    historyBtn.addEventListener("click", (e) => {
-      historyDropdown.classList.toggle("hidden");
-      e.stopPropagation();
-    });
-    window.addEventListener("click", (e) => {
-      if (!historyBtn.contains(e.target) && !historyDropdown.contains(e.target)) historyDropdown.classList.add("hidden");
+    // Modal Functions
+    function openModal() {
+      historyModal.classList.remove("hidden");
+      historyModal.classList.add("flex");
+    }
+
+    function closeModal() {
+      historyModal.classList.add("hidden");
+      historyModal.classList.remove("flex");
+    }
+
+    historyBtn.addEventListener("click", openModal);
+    closeHistory.addEventListener("click", closeModal);
+    historyModal.addEventListener("click", (e) => {
+      if (e.target === historyModal) closeModal();
     });
 
+    // Traffic Toggle
     trafficBtn.addEventListener("click", () => {
       trafficOn = !trafficOn;
       trafficLayer.setMap(trafficOn ? map : null);
       trafficBtn.innerText = trafficOn ? "Traffic On" : "Traffic Off";
     });
 
+    // Plan Trip
     planTripBtn.addEventListener("click", () => {
       const pointA = document.getElementById("pointA").value.trim();
       const pointB = document.getElementById("pointB").value.trim();
@@ -255,8 +277,27 @@
       });
     });
 
-    function renderRouteList() {
-      let listHtml = `<h3 class="text-lg font-semibold mb-3">Choose a Route</h3>`;
+    // Render Routes with Filter
+    function renderRouteList(sortBy = null) {
+      // clone to avoid permanently reordering the doctor's original order unless desired
+      // but for simplicity we sort the in-memory array used for display
+      if (sortBy === "distance") {
+        allRoutes.sort((a, b) => a.legs[0].distance.value - b.legs[0].distance.value);
+      } else if (sortBy === "duration") {
+        allRoutes.sort((a, b) => a.legs[0].duration.value - b.legs[0].duration.value);
+      }
+
+      let listHtml = `
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-lg font-semibold">Choose a Route</h3>
+          <select id="routeFilter" class="border border-gray-300 text-sm rounded-lg p-2 focus:ring-blue-400 focus:border-blue-400">
+            <option value="">Sort By</option>
+            <option value="distance">Lowest Distance (KM)</option>
+            <option value="duration">Shortest Arrival (Time)</option>
+          </select>
+        </div>
+      `;
+
       allRoutes.forEach((route, idx) => {
         const leg = route.legs[0];
         listHtml += `
@@ -270,11 +311,17 @@
                 <button class="select-route inline-block bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600" data-index="${idx}">Select</button>
               </div>
             </div>
-          </div>
-        `;
+          </div>`;
       });
       transitInfo.innerHTML = listHtml;
 
+      // Filter logic
+      const filterEl = document.getElementById("routeFilter");
+      filterEl.addEventListener("change", (e) => {
+        renderRouteList(e.target.value);
+      });
+
+      // Route selection
       document.querySelectorAll('.select-route').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const idx = parseInt(e.currentTarget.getAttribute('data-index'), 10);
@@ -283,6 +330,7 @@
       });
     }
 
+    // Select Route
     function selectRoute(index) {
       selectedRouteIndex = index;
       directionsRenderer.setDirections(lastResult);
@@ -295,39 +343,112 @@
             <button id="backToRoutesBtn" class="bg-gray-300 text-gray-800 px-5 py-3 rounded-2xl hover:bg-gray-400 transition">Back</button>
             <button id="startTripBtn" class="bg-green-500 text-white px-6 py-3 rounded-2xl hover:bg-green-600 transition">Start Trip</button>
           </div>
+        </div>`;
+
+      document.getElementById("startTripBtn").addEventListener("click", showTripDetails);
+      document.getElementById("backToRoutesBtn").addEventListener("click", () => renderRouteList());
+    }
+
+    // Trip Steps + Fare Calculation and Display
+    async function showTripDetails() {
+      if (selectedRouteIndex == null || !allRoutes[selectedRouteIndex]) return alert("No route selected.");
+
+      const leg = allRoutes[selectedRouteIndex].legs[0];
+      const steps = leg.steps;
+
+      // Fare calculation logic:
+      // - We'll compute a simple base fare from distance (meters -> km * perKmRate)
+      // - perKmRate is a chosen constant; you can adjust it later or replace with exact fare data
+      const distanceMeters = leg.distance.value || 0;
+      const distanceKm = distanceMeters / 1000;
+      // choose a minimum base fare and a per-km multiplier — tweak to your needs
+      const perKmRate = 10; // PHP per km (example)
+      const minFare = 10; // minimum fare floor
+      let regularFare = Math.max(minFare, Math.round(distanceKm * perKmRate));
+
+      // Round to 2 decimal places (though fares are usually whole pesos)
+      regularFare = Number(regularFare.toFixed(2));
+
+      // Discounts: 20% off for Student, PWD, Senior (common practice)
+      const discountRate = 0.20;
+      const studentFare = Number((regularFare * (1 - discountRate)).toFixed(2));
+      const pwdFare = Number((regularFare * (1 - discountRate)).toFixed(2));
+      const seniorFare = Number((regularFare * (1 - discountRate)).toFixed(2));
+
+      // Build Trip Steps HTML including fare section
+      let html = `<h3 class="text-lg font-semibold mb-3">Trip Steps</h3>`;
+
+      // Basic route summary
+      html += `
+        <div class="mb-3 p-3 border rounded-xl bg-gray-50">
+          <div class="text-sm text-gray-600 mb-1"><strong>From:</strong> ${leg.start_address || ''}</div>
+          <div class="text-sm text-gray-600 mb-1"><strong>To:</strong> ${leg.end_address || ''}</div>
+          <div class="text-sm text-gray-600"><strong>Distance:</strong> ${leg.distance?.text || ''} • <strong>Duration:</strong> ${leg.duration?.text || ''}</div>
         </div>
       `;
 
-      document.getElementById("startTripBtn").addEventListener("click", showTripDetails);
-      document.getElementById("backToRoutesBtn").addEventListener("click", renderRouteList);
-    }
+      // Fare Info Card
+      html += `
+        <div class="mt-2 bg-white p-3 rounded-lg border border-gray-200 mb-4">
+          <h4 class="font-medium text-gray-800 mb-2">Fare Details</h4>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="flex justify-between">
+              <span>Regular Fare:</span>
+              <span class="font-semibold text-gray-800">₱${regularFare}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Student Fare (20% off):</span>
+              <span class="font-semibold text-gray-800">₱${studentFare}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>PWD Fare (20% off):</span>
+              <span class="font-semibold text-gray-800">₱${pwdFare}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Senior Fare (20% off):</span>
+              <span class="font-semibold text-gray-800">₱${seniorFare}</span>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Fare estimated from distance. Adjust per-route fare rules as needed.</p>
+        </div>
+      `;
 
-    async function showTripDetails() {
-      if (selectedRouteIndex == null || !allRoutes[selectedRouteIndex]) {
-        return alert("No route selected.");
-      }
-
-      const steps = allRoutes[selectedRouteIndex].legs[0].steps;
-      let html = `<h3 class="text-lg font-semibold mb-3">Trip Steps</h3>`;
-
-      for (let i = 0; i < steps.length; i++) {
-        const step = steps[i];
+      // Steps list
+      for (let step of steps) {
+        // sanitize instructions: Google returns HTML in instructions; keep it safe for innerHTML here since this is the original usage
         html += `
           <div class="rounded-xl p-3 mb-3 border">
             <div class="font-medium">${step.instructions}</div>
             <div class="text-sm text-gray-600">${step.distance?.text || ''} • ${step.duration?.text || ''}</div>
-          </div>
-        `;
+          </div>`;
       }
 
+      // Add back button and optionally start/finish controls
+      html += `
+        <div class="flex justify-between mt-3">
+          <button id="backToRoutes" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-2xl hover:bg-gray-300">Back</button>
+          <button id="endTripBtn" class="bg-red-500 text-white px-4 py-2 rounded-2xl hover:bg-red-600">End Trip</button>
+        </div>
+      `;
+
       transitInfo.innerHTML = html;
+
+      // Hook up the buttons
+      document.getElementById("backToRoutes").addEventListener("click", () => renderRouteList());
+      document.getElementById("endTripBtn").addEventListener("click", () => {
+        alert("Trip ended.");
+        // optional: clear selected route and map overlay
+        selectedRouteIndex = null;
+        // reset directions rendering (keeps map view)
+        directionsRenderer.setDirections({ routes: [] });
+        transitInfo.innerHTML = "<p class='text-gray-400'>Suggested route steps will appear here after planning your trip.</p>";
+      });
     }
 
+    // Register SW
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('Service Worker registered:', reg))
-          .catch(err => console.log('Service Worker registration failed:', err));
+        navigator.serviceWorker.register('sw.js');
       });
     }
   </script>
