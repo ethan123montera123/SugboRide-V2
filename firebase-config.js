@@ -6,7 +6,6 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     onAuthStateChanged,
-    sendEmailVerification,
     signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
@@ -35,19 +34,15 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        if (user.emailVerified) {
-            statusMessage.textContent = "✅ Login successful!";
-            setTimeout(() => (window.location.href = "dashboard.html"), 1000);
-        } else {
-            await signOut(auth);
-            statusMessage.textContent = "⚠️ Please verify your email first. Check your inbox.";
-        }
+        // ✅ Login successful immediately (no verification)
+        statusMessage.textContent = "✅ Login successful!";
+        setTimeout(() => (window.location.href = "dashboard.html"), 1000);
     } catch (err) {
         statusMessage.textContent = "❌ " + err.message;
     }
 });
 
-// SIGNUP + EMAIL VERIFICATION
+// SIGNUP
 document.getElementById("signupForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("signupEmail").value;
@@ -57,26 +52,19 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // ✅ Force redirect link back to your domain
-        const actionCodeSettings = {
-            url: window.location.origin + "/index.html",
-            handleCodeInApp: false
-        };
+        // ✅ Direct login after signup
+        statusMessage.textContent = "✅ Signup successful! Redirecting...";
+        setTimeout(() => (window.location.href = "dashboard.html"), 1000);
 
-        await sendEmailVerification(user, actionCodeSettings);
-        statusMessage.textContent = "📩 Verification email sent! Please check your inbox (or spam).";
-
-        // Logout until verified
-        await signOut(auth);
     } catch (err) {
-        console.error("Error sending verification:", err);
+        console.error("Signup error:", err);
         statusMessage.textContent = "❌ " + err.message;
     }
 });
 
 // AUTO LOGIN CHECK
 onAuthStateChanged(auth, (user) => {
-    if (user && user.emailVerified && !window.location.href.includes("dashboard.html")) {
+    if (user && !window.location.href.includes("dashboard.html")) {
         window.location.href = "dashboard.html";
     }
 });
