@@ -1,105 +1,69 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0ea5e9" />
-  <title>Tailwind PWA</title>
-
-  <!-- Tailwind CDN -->
+  <title>SugboRide | Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json" />
-
-  <!-- Apple Meta (Optional for iOS) -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <link rel="apple-touch-icon" href="assets/Logo.png" />
-
+  <link rel="icon" href="assets/Logo.png" />
   <style>
-    html,
-    body {
-      height: 100%;
+    .bg-animate {
+      background: linear-gradient(270deg, #0284c7, #0ea5e9, #38bdf8);
+      background-size: 600% 600%;
+      animation: gradientShift 10s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
     }
   </style>
 </head>
 
-<body class="flex flex-col min-h-screen bg-gray-50 text-gray-800">
-  <!-- Header -->
-  <header class="bg-white shadow sticky top-0 z-20">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="assets/Logo.png" alt="Logo" class="w-10 h-10 rounded" />
-        <h1 class="text-lg font-semibold">Tailwind PWA</h1>
-      </div>
-      <button id="installBtn" class="hidden bg-sky-500 text-white px-3 py-1 rounded-md text-sm">
-        Install App
-      </button>
-    </div>
-  </header>
+<body class="min-h-screen flex items-center justify-center bg-animate">
 
-  <!-- Main Content -->
-  <main class="flex-1 max-w-4xl mx-auto p-6">
-    <h2 class="text-2xl font-bold mb-2">Hello 👋</h2>
-    <p class="text-gray-600 mb-6">This is a basic Progressive Web App using TailwindCSS and HTML. You can install it or
-      use it offline!</p>
+  <!-- Container -->
+  <div
+    class="bg-white/20 backdrop-blur-md rounded-2xl p-8 w-[90%] md:w-[400px] shadow-2xl text-white relative overflow-hidden transition-all duration-500">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-white p-4 rounded-lg shadow">
-        <h3 class="font-semibold mb-2">App Shell</h3>
-        <p class="text-sm text-gray-600">This static content is cached for instant loading.</p>
-      </div>
-
-      <div class="bg-white p-4 rounded-lg shadow">
-        <h3 class="font-semibold mb-2">Offline Ready</h3>
-        <p class="text-sm text-gray-600">If you go offline, the app will still work with cached data.</p>
-      </div>
+    <div class="flex flex-col items-center gap-4">
+      <img src="assets/Logo.png" alt="SugboRide" class="w-20 drop-shadow-lg animate-bounce" />
+      <h1 class="text-2xl font-bold">Welcome Back 👋</h1>
+      <p class="text-sm text-blue-100">Login to continue your ride experience</p>
     </div>
 
-    <button id="cacheClear" class="mt-6 bg-rose-500 text-white px-4 py-2 rounded">Clear Cache</button>
-  </main>
+    <form id="loginForm" class="mt-6 flex flex-col gap-4">
+      <input id="loginEmail" type="email" placeholder="Email"
+        class="p-3 rounded-lg bg-white/20 placeholder-white text-white outline-none focus:ring-2 focus:ring-cyan-400 transition"
+        required />
+      <input id="loginPassword" type="password" placeholder="Password"
+        class="p-3 rounded-lg bg-white/20 placeholder-white text-white outline-none focus:ring-2 focus:ring-cyan-400 transition"
+        required />
 
-  <!-- Footer -->
-  <footer class="bg-white py-4 text-center text-sm text-gray-500 shadow-inner">
-    © <span id="year"></span> Tailwind PWA — Works Offline
-  </footer>
+      <button type="submit"
+        class="bg-cyan-500 hover:bg-cyan-400 transition-all duration-300 text-white font-semibold py-2 rounded-lg shadow-lg">Login</button>
+    </form>
 
-  <script>
-    // Dynamic Year
-    document.getElementById("year").textContent = new Date().getFullYear();
+    <p class="text-sm mt-4 text-center text-blue-100">
+      Don’t have an account? <a href="signup.html" class="text-white underline">Sign up</a>
+    </p>
 
-    // Service Worker Registration
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
+    <div id="toast"
+      class="hidden fixed bottom-6 left-6 bg-white text-gray-800 px-4 py-2 rounded shadow-lg text-sm font-medium animate-fade">
+    </div>
+  </div>
 
-    // Add to Home Screen (A2HS)
-    let deferredPrompt;
-    const installBtn = document.getElementById("installBtn");
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = "inline-block";
-    });
-
-    installBtn.addEventListener("click", async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        installBtn.style.display = "none";
-      }
-    });
-
-    // Clear Cache
-    document.getElementById("cacheClear").addEventListener("click", async () => {
-      const keys = await caches.keys();
-      for (const key of keys) await caches.delete(key);
-      alert("Cache cleared! Reload to re-cache.");
-    });
-  </script>
+  <script type="module" src="app.js"></script>
 </body>
 
 </html>
