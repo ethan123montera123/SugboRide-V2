@@ -1,35 +1,20 @@
-const CACHE_NAME = "tailwind-pwa-v1";
-const OFFLINE_URL = "offline.html";
-
-const ASSETS = [
-    "./",
-    "index.html",
-    "offline.html",
-    "manifest.json",
-    "assets/Logo.png"
-];
-
-// Install event
-self.addEventListener("install", (e) => {
-    e.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-    );
-});
-
-// Fetch event
-self.addEventListener("fetch", (e) => {
-    e.respondWith(
-        caches.match(e.request).then((cached) => {
-            return cached || fetch(e.request).catch(() => caches.match(OFFLINE_URL));
+self.addEventListener("install", (event) => {
+    event.waitUntil(
+        caches.open("sugboride-cache").then((cache) => {
+            return cache.addAll([
+                "/",
+                "/index.html",
+                "/dashboard.html",
+                "/manifest.json",
+                "/assets/Logo.png"
+            ]);
         })
     );
+    console.log("Service Worker Installed ✅");
 });
 
-// Activate event
-self.addEventListener("activate", (e) => {
-    e.waitUntil(
-        caches.keys().then((keys) =>
-            Promise.all(keys.map((key) => key !== CACHE_NAME && caches.delete(key)))
-        )
+self.addEventListener("fetch", (event) => {
+    event.respondWith(
+        caches.match(event.request).then((response) => response || fetch(event.request))
     );
 });

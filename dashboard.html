@@ -2,18 +2,33 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SugboRide Dashboard</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="apple-touch-icon" href="assets/Logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="./dashboard.js" defer></script>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-cyan-600 to-sky-500 text-white flex items-center justify-center">
-    <div class="text-center">
-        <img src="assets/Logo.png" class="w-24 mx-auto mb-4 animate-bounce" />
-        <h1 class="text-3xl font-bold">Welcome to SugboRide 🚗</h1>
-        <p class="mt-2 text-white/80">Enjoy your commuter experience!</p>
+<body
+    class="bg-gradient-to-br from-blue-600 via-indigo-500 to-purple-600 min-h-screen flex flex-col items-center justify-center text-white">
+    <div
+        class="backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-3xl p-8 w-full max-w-lg text-center animate-fade-in">
+        <img src="assets/Logo.png" alt="Logo" class="w-24 mx-auto mb-4 drop-shadow-lg">
+        <h1 class="text-3xl font-bold mb-2">Welcome to Your Dashboard</h1>
+        <p class="text-white/70 mb-8" id="userEmail">Loading user...</p>
+
+        <button id="logoutBtn"
+            class="px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition transform hover:scale-105">
+            Logout
+        </button>
     </div>
+
+    <footer class="absolute bottom-6 text-white/70 text-sm">
+        © 2025 SugboRide — Powered by Firebase
+    </footer>
 </body>
 
 </html>
