@@ -40,13 +40,14 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
     createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
             statusMessage.textContent = "✅ Account created successfully!";
+            setTimeout(() => (window.location.href = "dashboard.html"), 1000);
         })
         .catch(err => (statusMessage.textContent = "❌ " + err.message));
 });
 
-// // AUTO LOGIN CHECK
-// onAuthStateChanged(auth, (user) => {
-//     if (user && !window.location.href.includes("dashboard.html")) {
-//         window.location.href = "dashboard.html";
-//     }
-// });
+// AUTO LOGIN CHECK
+onAuthStateChanged(auth, (user) => {
+    if (user && !window.location.href.includes("dashboard.html")) {
+        window.location.href = "dashboard.html";
+    }
+});
