@@ -2,22 +2,236 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Routes - SugboRide</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SugboRide Route Finder</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a2d9b6c9f7.js" crossorigin="anonymous"></script>
+    <style>
+        /* Map height for mobile */
+        #map {
+            width: 100%;
+            height: 100vh;
+            /* half of viewport height on mobile */
+            border-radius: 1rem;
+        }
+
+        /* Tablet/Desktop: map full height */
+        @media (min-width: 768px) {
+            #map {
+                height: 100%;
+                width: 100%;
+            }
+        }
+
+        /* Main content flex container */
+        .main-content {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            /* mobile first */
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                flex-direction: row;
+                /* side by side for larger screens */
+            }
+        }
+    </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-sky-500 to-indigo-600 text-white p-6">
-    <div class="max-w-3xl mx-auto">
-        <h1 class="text-3xl font-bold mb-4">Choose a Route</h1>
-        <p class="mb-6">This page is accessible once the profile is completed.</p>
+<body class="bg-gray-50 min-h-screen flex flex-col">
 
-        <!-- placeholder -->
-        <div class="bg-white/10 p-6 rounded-lg">
-            <p class="text-white/80">Routes content goes here.</p>
+    <!-- 🌐 Navbar -->
+    <nav class="bg-white shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">SugboRide</h1>
+        <button id="logoutBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+            Logout
+        </button>
+    </nav>
+
+    <!-- 🧭 Search Form -->
+    <div class="p-6 bg-white shadow-sm mt-4 mx-4 rounded-xl">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Find Your Route</h2>
+        <div class="flex flex-col md:flex-row gap-4">
+            <input id="from" type="text" placeholder="Enter starting point"
+                class="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" />
+            <input id="to" type="text" placeholder="Enter destination"
+                class="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" />
+            <button id="findRoute" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                <i class="fa-solid fa-route mr-2"></i>Find Route
+            </button>
         </div>
     </div>
+
+    <!-- 📍 Main Content -->
+    <div class="main-content flex-grow">
+
+        <!-- 🗺️ Left Column: Map -->
+        <div class="w-full md:w-2/3 bg-white rounded-xl shadow-lg p-2 flex-1">
+            <div id="map"></div>
+        </div>
+
+        <!-- 🚎 Right Column: Trip Details -->
+        <div class="w-full md:w-1/3 bg-white rounded-xl shadow-lg p-4 overflow-y-auto flex-1">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Trip Details</h3>
+                <select id="filterSelect" class="border rounded-lg p-2 focus:ring-2 focus:ring-blue-400">
+                    <option value="none">Sort by</option>
+                    <option value="distanceHigh">Highest → Lowest KM</option>
+                    <option value="distanceLow">Lowest → Highest KM</option>
+                    <option value="durationHigh">Longest → Shortest Time</option>
+                    <option value="durationLow">Shortest → Longest Time</option>
+                </select>
+            </div>
+
+            <div id="tripDetails" class="space-y-4 text-gray-700">
+                <p class="text-center text-gray-400">Search for a route to see trip details here.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 Google Maps API -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places"></script>
+
+    <script>
+        let map, directionsService, directionsRenderer;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 10.3157, lng: 123.8854 },
+                zoom: 12,
+            });
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({ map });
+
+            new google.maps.places.Autocomplete(document.getElementById("from"));
+            new google.maps.places.Autocomplete(document.getElementById("to"));
+        }
+
+        document.getElementById("findRoute").addEventListener("click", () => {
+            const from = document.getElementById("from").value;
+            const to = document.getElementById("to").value;
+
+            if (!from || !to) {
+                alert("Please enter both locations.");
+                return;
+            }
+
+            const request = {
+                origin: from,
+                destination: to,
+                travelMode: google.maps.TravelMode.TRANSIT,
+                provideRouteAlternatives: true,
+            };
+
+            directionsService.route(request, (result, status) => {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                    displayTrips(result.routes);
+                } else {
+                    alert("No public transportation routes found. Try a nearby location.");
+                }
+            });
+        });
+
+        function displayTrips(routes) {
+            const tripDetails = document.getElementById("tripDetails");
+            tripDetails.innerHTML = "";
+
+            routes.forEach((route, i) => {
+                const leg = route.legs[0];
+                const distance = leg.distance.text;
+                const duration = leg.duration.text;
+                const start = leg.start_address;
+                const end = leg.end_address;
+
+                let transportDetails = "";
+                leg.steps.forEach(step => {
+                    if (step.travel_mode === "TRANSIT") {
+                        const line = step.transit.line;
+                        const vehicle = line.vehicle ? line.vehicle.type : "Transit";
+                        const vehicleIcon = getVehicleIcon(vehicle);
+                        const name = line.short_name || line.name || "Unknown Route"; // Jeepney/Bus number
+                        const depStop = step.transit.departure_stop.name;
+                        const arrStop = step.transit.arrival_stop.name;
+                        const depTime = step.transit.departure_time ? step.transit.departure_time.text : "N/A";
+                        const arrTime = step.transit.arrival_time ? step.transit.arrival_time.text : "N/A";
+
+                        transportDetails += `
+                            <div class="border rounded-lg p-3 my-2 bg-blue-50">
+                                <p class="font-semibold flex items-center gap-2">
+                                    ${vehicleIcon} ${vehicle} - ${name}
+                                </p>
+                                <p>Board at: <strong>${depStop}</strong> at <strong>${depTime}</strong></p>
+                                <p>Alight at: <strong>${arrStop}</strong> by <strong>${arrTime}</strong></p>
+                            </div>
+                        `;
+                    }
+                });
+
+                const div = document.createElement("div");
+                div.className = "p-4 border rounded-lg shadow hover:shadow-md transition cursor-pointer";
+                div.innerHTML = `
+                    <p class="font-semibold text-blue-600 mb-1">Route ${i + 1}</p>
+                    <p><strong>From:</strong> ${start}</p>
+                    <p><strong>To:</strong> ${end}</p>
+                    <p><strong>Distance:</strong> ${distance}</p>
+                    <p><strong>Duration:</strong> ${duration}</p>
+                    <div class="mt-3">${transportDetails || '<p>No public transport data available.</p>'}</div>
+                `;
+                div.addEventListener("click", () => {
+                    directionsRenderer.setRouteIndex(i);
+                });
+
+                tripDetails.appendChild(div);
+            });
+        }
+
+        function getVehicleIcon(type) {
+            switch (type) {
+                case "BUS": return '<i class="fa-solid fa-bus text-blue-600"></i>';
+                case "SUBWAY": return '<i class="fa-solid fa-train-subway text-green-600"></i>';
+                case "TRAIN": return '<i class="fa-solid fa-train text-gray-600"></i>';
+                case "TRAM": return '<i class="fa-solid fa-tram text-yellow-600"></i>';
+                case "FERRY": return '<i class="fa-solid fa-ship text-indigo-600"></i>';
+                default: return '<i class="fa-solid fa-person-walking text-gray-600"></i>';
+            }
+        }
+
+        // Sorting / Filtering
+        document.getElementById("filterSelect").addEventListener("change", (e) => {
+            const selected = e.target.value;
+            const routes = directionsRenderer.getDirections()?.routes;
+            if (!routes) return;
+
+            let sortedRoutes = [...routes];
+
+            if (selected === "distanceHigh") {
+                sortedRoutes.sort((a, b) => b.legs[0].distance.value - a.legs[0].distance.value);
+            } else if (selected === "distanceLow") {
+                sortedRoutes.sort((a, b) => a.legs[0].distance.value - b.legs[0].distance.value);
+            } else if (selected === "durationHigh") {
+                sortedRoutes.sort((a, b) => b.legs[0].duration.value - a.legs[0].duration.value);
+            } else if (selected === "durationLow") {
+                sortedRoutes.sort((a, b) => a.legs[0].duration.value - b.legs[0].duration.value);
+            }
+
+            displayTrips(sortedRoutes);
+        });
+
+        // Logout
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+        });
+
+        window.onload = initMap;
+    </script>
 </body>
 
 </html>

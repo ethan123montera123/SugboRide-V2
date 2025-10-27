@@ -5,6 +5,7 @@ self.addEventListener("install", (event) => {
                 "/",
                 "/index.html",
                 "/dashboard.html",
+                "/route.html",
                 "/manifest.json",
                 "/assets/Logo.png"
             ]);
