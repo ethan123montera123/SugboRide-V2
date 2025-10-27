@@ -1,268 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SugboRide</title>
-  <meta name="description"
-    content="SugboRide helps you know when to ride public transport and when to depart — live location-aware PWA for the Philippines." />
-  <meta name="theme-color" content="#0ea5a4" />
-  <link rel="icon" type="image/png" href="assets/logo.png">
-  <link rel="apple-touch-icon" href="assets/logo-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <!-- Tailwind CDN -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SugboRide - Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <link rel="manifest" href="manifest.json">
+  <script defer src="/js/firebase.js" type="module"></script>
+  <script defer src="login.js" type="module"></script>
   <style>
-    * {
-      transition: all 0.3s ease-in-out;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-    }
-
-    .fade-in {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .btn-primary {
-      @apply bg-sky-600 text-white font-semibold rounded-lg px-6 py-3 shadow hover:bg-sky-700;
-    }
-
-    .btn-secondary {
-      @apply border border-slate-300 rounded-lg px-5 py-3 hover:bg-sky-50 font-medium;
+    body {
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      min-height: 100vh;
     }
   </style>
 </head>
 
-<body class="bg-gradient-to-b from-sky-50 to-white text-slate-800 antialiased">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('Service Worker Registered'));
+  }
+</script>
 
-  <!-- Header -->
-  <header class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-    <a href="#" class="flex items-center gap-3">
-      <img src="assets/logo.png" alt="SugboRide Logo" class="w-12 h-12 rounded-lg object-cover">
-      <div>
-        <h1 class="text-2xl font-bold text-slate-900">SugboRide</h1>
-        <p class="text-xs text-slate-500">Know when to ride. Know when to depart.</p>
-      </div>
-    </a>
-    <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-      <a href="#features" class="hover:text-sky-600">Features</a>
-      <a href="#howitworks" class="hover:text-sky-600">How it works</a>
-      <a href="./main.html" class="hover:text-sky-600">Download</a>
-      <a href="./fire.html" class="hover:text-sky-600">Fire Emergency</a>
-      <a href="#contact" class="px-4 py-2 rounded-md border border-slate-200 hover:bg-sky-50 hover:text-sky-600">Contact</a>
-    </nav>
-    <div class="md:hidden">
-      <button aria-label="Open menu" class="p-2 rounded-md border hover:bg-sky-50">☰</button>
-    </div>
-  </header>
+<body class="flex items-center justify-center">
+  <div
+    class="bg-white/90 p-8 rounded-2xl shadow-2xl w-96 text-center backdrop-blur-sm transition-all hover:scale-105 duration-300">
+    <h1 class="text-3xl font-bold mb-4 text-blue-700">Welcome Back</h1>
+    <p class="text-gray-600 mb-6">Login to continue to SugboRide</p>
 
-  <main class="max-w-7xl mx-auto px-6">
+    <input id="email" type="email" placeholder="Email"
+      class="w-full mb-3 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <input id="password" type="password" placeholder="Password"
+      class="w-full mb-4 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
 
-    <!-- Hero Section -->
-    <section class="grid gap-10 md:grid-cols-2 items-center my-16 fade-in">
-      <div class="space-y-6">
-        <h2 class="text-4xl sm:text-5xl font-extrabold leading-tight text-slate-900">Never Miss Your Ride Again</h2>
-        <p class="text-slate-600 text-lg">SugboRide is your personal commuter assistant. Get real-time departure alerts, live ETA, and route info for public transportation in the Philippines.</p>
+    <button id="loginBtn"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-all duration-200">Login</button>
 
-        <div class="flex flex-wrap gap-4">
-          <a id="installBtn" href="./main.html" class="btn-primary inline-flex items-center gap-2">
-            Install PWA
-          </a>
-          <button id="checkLocation" class="btn-secondary inline-flex items-center gap-2">
-            Check my location
-          </button>
-        </div>
-
-        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 mt-4 text-sm">
-          <li class="flex items-start gap-2"><span class="text-sky-600 font-bold">•</span> Live location tracking</li>
-          <li class="flex items-start gap-2"><span class="text-sky-600 font-bold">•</span> Departure & arrival alerts</li>
-          <li class="flex items-start gap-2"><span class="text-sky-600 font-bold">•</span> Low-data & battery-friendly</li>
-          <li class="flex items-start gap-2"><span class="text-sky-600 font-bold">•</span> Offline routes</li>
-        </ul>
-      </div>
-
-      <div class="flex justify-center">
-        <div class="w-full max-w-md glass rounded-3xl shadow-xl p-5">
-          <div class="h-96 bg-gradient-to-br from-slate-100 to-white rounded-xl flex flex-col overflow-hidden">
-            <div class="px-4 py-3 flex items-center justify-between text-sm font-medium text-slate-700">
-              SugboRide Demo <span class="text-xs text-slate-400">PWA</span>
-            </div>
-            <div class="flex-1 p-4 flex flex-col gap-4">
-              <div class="h-3 bg-slate-200 rounded w-3/4"></div>
-              <div class="h-3 bg-slate-200 rounded w-1/2"></div>
-              <div class="mt-auto flex items-center justify-between">
-                <div>
-                  <div class="text-sm font-semibold">Arrival</div>
-                  <div class="text-2xl font-bold">5 min</div>
-                </div>
-                <div class="text-right text-sm">
-                  <div>Next stop</div>
-                  <div class="font-medium">Colon St.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="my-20 fade-in">
-      <h3 class="text-3xl font-bold text-slate-900 mb-8">Features</h3>
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg hover:-translate-y-1">
-          <h4 class="font-semibold text-slate-900 mb-2">Smart Departure Alerts</h4>
-          <p class="text-sm text-slate-600">Get punctual notifications telling you when to leave based on travel time and walking distance.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg hover:-translate-y-1">
-          <h4 class="font-semibold text-slate-900 mb-2">Live ETA</h4>
-          <p class="text-sm text-slate-600">Track live estimates to stops and get updated arrival times for public vehicles.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg hover:-translate-y-1">
-          <h4 class="font-semibold text-slate-900 mb-2">Offline Mode</h4>
-          <p class="text-sm text-slate-600">Access cached routes and schedules even when offline — perfect for spotty connections.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg hover:-translate-y-1">
-          <h4 class="font-semibold text-slate-900 mb-2">Low Battery Usage</h4>
-          <p class="text-sm text-slate-600">Designed to preserve battery life by limiting background checks.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg hover:-translate-y-1">
-          <h4 class="font-semibold text-slate-900 mb-2">Local Routes (PH)</h4>
-          <p class="text-sm text-slate-600">Preloaded common city routes and stops for major cities in the Philippines.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-lg hover:-translate-y-1">
-          <h4 class="font-semibold text-slate-900 mb-2">Privacy First</h4>
-          <p class="text-sm text-slate-600">All sensitive data stays locally on your device. Share only when necessary.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- How it Works -->
-    <section id="howitworks" class="my-20 fade-in">
-      <h3 class="text-3xl font-bold text-slate-900 mb-8">How it Works</h3>
-      <div class="grid gap-8 sm:grid-cols-3">
-        <div class="p-6 bg-sky-50 rounded-2xl text-center shadow hover:shadow-lg hover:-translate-y-1">
-          <div class="text-4xl font-bold text-sky-600">1</div>
-          <p class="mt-4 text-sm text-slate-700">Install the PWA or open SugboRide in your browser.</p>
-        </div>
-        <div class="p-6 bg-sky-50 rounded-2xl text-center shadow hover:shadow-lg hover:-translate-y-1">
-          <div class="text-4xl font-bold text-sky-600">2</div>
-          <p class="mt-4 text-sm text-slate-700">Allow location access (used only to compute times).</p>
-        </div>
-        <div class="p-6 bg-sky-50 rounded-2xl text-center shadow hover:shadow-lg hover:-translate-y-1">
-          <div class="text-4xl font-bold text-sky-600">3</div>
-          <p class="mt-4 text-sm text-slate-700">Get push alerts and go — SugboRide does the timing for you.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="my-20 grid gap-8 md:grid-cols-2 fade-in">
-      <div class="p-6 bg-white rounded-2xl border shadow hover:shadow-lg">
-        <h4 class="font-semibold text-slate-900">Privacy-first by design</h4>
-        <p class="mt-2 text-sm text-slate-600">SugboRide keeps your location data on-device. You can export or delete local logs anytime.</p>
-      </div>
-      <form id="contactForm" class="p-6 bg-white rounded-2xl border shadow hover:shadow-lg space-y-4">
-        <h4 class="font-semibold text-slate-900">Contact / Feedback</h4>
-        <p class="text-sm text-slate-600">Send us feedback to improve routes, add cities, or report bugs.</p>
-        <input id="name" name="name" placeholder="Your name" class="px-3 py-2 border rounded w-full" required />
-        <input id="email" name="email" placeholder="Your email" class="px-3 py-2 border rounded w-full" type="email" required />
-        <textarea id="message" name="message" placeholder="Message" class="px-3 py-2 border rounded w-full h-28" required></textarea>
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <button type="submit" class="btn-primary w-full sm:w-auto">Send</button>
-          <div class="text-xs text-slate-400">You'll receive a reply within 2 business days.</div>
-        </div>
-        <p id="statusMessage" class="text-xs text-sky-600 mt-2"></p>
-      </form>
-    </section>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="mt-12 py-8 border-t border-slate-100 bg-white">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="text-sm text-slate-600">© SugboRide — Built for commuters in the Philippines.</div>
-      <div class="flex items-center gap-4 text-sm">
-        <a href="#" class="hover:text-sky-600">Terms</a>
-        <a href="#" class="hover:text-sky-600">Privacy</a>
-        <a href="#" class="hover:text-sky-600">GitHub</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Scripts (keep your existing JS) -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <script>
-    (function () { emailjs.init("8xMgDw0K4xKG0K1Af"); })();
-    document.getElementById('contactForm').addEventListener('submit', function (event) {
-      event.preventDefault();
-      const status = document.getElementById('statusMessage');
-      status.textContent = "Sending message...";
-      const templateParams = {
-        from_name: document.getElementById('name').value,
-        from_email: document.getElementById('email').value,
-        message: document.getElementById('message').value
-      };
-      emailjs.send('service_n0p47od', 'template_37u5u55', templateParams)
-        .then(() => { status.textContent = "✅ Message sent successfully!"; this.reset(); },
-          (error) => { status.textContent = "❌ Failed to send. Please try again."; console.error(error); });
-    });
-
-    // Location check
-    document.getElementById('checkLocation').addEventListener('click', async () => {
-      if (!('geolocation' in navigator)) { alert('Geolocation not supported'); return; }
-      navigator.geolocation.getCurrentPosition(pos => {
-        const { latitude, longitude } = pos.coords;
-        alert(`Your current location:\nLat: ${latitude.toFixed(5)}, Lon: ${longitude.toFixed(5)}`);
-      }, err => { alert('Unable to access location: ' + err.message); });
-    });
-
-    // PWA install
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const installBtn = document.getElementById('installBtn');
-      installBtn.style.display = 'inline-flex';
-      installBtn.addEventListener('click', async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-      });
-    });
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('Service Worker registered', reg))
-          .catch(err => console.log('Service Worker registration failed:', err));
-      });
-    }
-
-    const sections = document.querySelectorAll('.fade-in');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    sections.forEach(section => observer.observe(section));
-  </script>
+    <p class="mt-4 text-gray-600">Don’t have an account?
+      <a href="signup.html" class="text-blue-600 hover:underline">Sign Up</a>
+    </p>
+  </div>
 </body>
+
 </html>

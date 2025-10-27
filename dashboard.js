@@ -1,19 +1,13 @@
-import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { auth } from "/js/firebase.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-const auth = getAuth();
+const logoutBtn = document.getElementById("logoutBtn");
 
-// Redirect to login if not signed in
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
+logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
     window.location.href = "index.html";
-  }
 });
 
-// Logout
-document.getElementById("logout-btn").addEventListener("click", () => {
-  signOut(auth)
-    .then(() => {
-      window.location.href = "index.html";
-    })
-    .catch((error) => alert(error.message));
+onAuthStateChanged(auth, (user) => {
+    if (!user) window.location.href = "index.html";
 });

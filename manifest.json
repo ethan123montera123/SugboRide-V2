@@ -1,20 +1,19 @@
 {
     "name": "SugboRide",
     "short_name": "SugboRide",
-    "description": "SugboRide helps you plan trips and know when to ride public transport in Cebu.",
     "start_url": "index.html",
     "display": "standalone",
-    "background_color": "#1E40AF",
-    "theme_color": "#1E40AF",
-    "orientation": "portrait",
+    "background_color": "#1e3a8a",
+    "theme_color": "#3b82f6",
+    "description": "SugboRide - Modern PWA Login System",
     "icons": [
         {
-            "src": "assets/logo.png",
+            "src": "icons/icon-192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "assets/logo.png",
+            "src": "icons/icon-512.png",
             "sizes": "512x512",
             "type": "image/png"
         }

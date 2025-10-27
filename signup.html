@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SugboRide - Sign Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <script defer src="/js/firebase.js" type="module"></script>
+    <script defer src="signup.js" type="module"></script>
+</head>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+            .then(() => console.log('Service Worker Registered'));
+    }
+</script>
+
+<body class="flex items-center justify-center bg-gradient-to-tr from-blue-800 to-blue-400 min-h-screen">
+    <div class="bg-white/90 p-8 rounded-2xl shadow-2xl w-96 text-center backdrop-blur-sm hover:scale-105 duration-300">
+        <h1 class="text-3xl font-bold mb-4 text-blue-700">Create Account</h1>
+        <p class="text-gray-600 mb-6">Join SugboRide today</p>
+
+        <input id="email" type="email" placeholder="Email"
+            class="w-full mb-3 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <input id="password" type="password" placeholder="Password"
+            class="w-full mb-4 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+
+        <button id="signupBtn"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-all duration-200">Sign
+            Up</button>
+
+        <p class="mt-4 text-gray-600">Already have an account?
+            <a href="index.html" class="text-blue-600 hover:underline">Login</a>
+        </p>
+    </div>
+</body>
+
+</html>
