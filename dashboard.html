@@ -10,16 +10,10 @@
     <script defer src="dashboard.js" type="module"></script>
 </head>
 
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(() => console.log('Service Worker Registered'));
-    }
-</script>
-
 <body
     class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-tr from-blue-600 to-indigo-500 text-white text-center">
-    <div class="p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-xl">
+    <div class="p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-xl animate-fadeIn">
+        <img src="assets/Logo.png" alt="Logo" class="w-20 mx-auto mb-4 animate-bounce">
         <h1 class="text-4xl font-bold mb-4">🚗 Welcome to SugboRide</h1>
         <p class="text-lg mb-6">You’re now logged in!</p>
         <button id="logoutBtn"
