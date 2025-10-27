@@ -74,9 +74,9 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
     }
 });
 
-// // AUTO LOGIN CHECK
-// onAuthStateChanged(auth, (user) => {
-//     if (user && user.emailVerified && !window.location.href.includes("dashboard.html")) {
-//         window.location.href = "dashboard.html";
-//     }
-// });
+// AUTO LOGIN CHECK
+onAuthStateChanged(auth, (user) => {
+    if (user && user.emailVerified && !window.location.href.includes("dashboard.html")) {
+        window.location.href = "dashboard.html";
+    }
+});
