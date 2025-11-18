@@ -1,177 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sugbo Ride Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-<!-- Firebase -->
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<!-- Google Maps API -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places"></script>
+<style>
+  #map { width: 100%; height: 100%; border-radius: 1rem; }
+  .map-container { height: 400px; }
+  .route-card { background: #fff; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 1rem; }
+</style>
 </head>
-<body class="flex min-h-screen bg-gray-100">
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-<!-- Sidebar -->
-<aside class="bg-blue-600 text-white w-64 p-6 flex-shrink-0">
-  <h1 class="text-2xl font-bold mb-6">Sugbo Ride</h1>
-  <nav class="space-y-4">
-    <a href="#" class="block py-2 px-3 rounded hover:bg-blue-500 transition">Dashboard</a>
+<!-- Desktop Top Navbar -->
+<nav class="hidden md:flex bg-blue-600 text-white px-6 py-4 justify-between items-center">
+  <div class="flex items-center space-x-4">
+    <h1 class="text-2xl font-bold">Sugbo Ride</h1>
+  </div>
+  <div class="flex items-center space-x-4">
+    <a href="#" class="block py-2 px-3 rounded bg-blue-700 md:bg-blue-600 transition font-semibold">Dashboard</a>
+
+    <!-- Emergency Dropdown -->
+    <div class="relative group">
+      <button class="block py-2 px-3 rounded hover:bg-blue-500 transition flex items-center">
+        Emergency <span class="ml-1">▼</span>
+      </button>
+      <div class="absolute left-0 mt-1 w-40 bg-white text-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-opacity z-50">
+        <a href="#" class="block px-4 py-2 hover:bg-gray-200">Earthquake</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-200">Fire</a>
+      </div>
+    </div>
+
     <a href="#" class="block py-2 px-3 rounded hover:bg-blue-500 transition">Account</a>
     <a href="#" id="logoutBtn" class="block py-2 px-3 rounded hover:bg-blue-500 transition">Logout</a>
-  </nav>
-</aside>
+  </div>
+</nav>
+
+<!-- Mobile Bottom Navbar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-blue-600 text-white md:hidden flex justify-around items-center py-2 shadow-inner z-50">
+  <a href="#" class="flex flex-col items-center text-sm font-semibold text-white">
+    <span>🏠</span>
+    <span>Dashboard</span>
+  </a>
+  <div class="relative flex flex-col items-center">
+    <button id="mobileEmergencyBtn" class="flex flex-col items-center text-sm font-semibold focus:outline-none">
+      <span>⚠️</span>
+      <span>Emergency</span>
+    </button>
+    <div id="mobileEmergencyDropdown" class="absolute bottom-10 flex flex-col bg-white text-gray-800 rounded shadow-lg hidden w-32">
+      <a href="#" class="block px-4 py-2 hover:bg-gray-200">Earthquake</a>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-200">Fire</a>
+    </div>
+  </div>
+  <a href="#" class="flex flex-col items-center text-sm font-semibold text-white">
+    <span>👤</span>
+    <span>Account</span>
+  </a>
+  <a href="#" id="mobileLogoutBtn" class="flex flex-col items-center text-sm font-semibold text-white">
+    <span>🚪</span>
+    <span>Logout</span>
+  </a>
+</nav>
 
 <!-- Main Content -->
-<div class="flex-1 p-6">
+<div class="flex-1 p-4 md:p-6 overflow-x-hidden mb-16 md:mb-0">
+
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
-    <h2 class="text-3xl font-bold text-gray-800" id="welcomeMessage">Dashboard</h2>
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800" id="welcomeMessage">Dashboard</h2>
     <span id="userEmail" class="text-gray-600"></span>
   </header>
 
   <main class="space-y-6">
     <!-- City Selector -->
-    <div class="bg-white p-6 rounded-xl shadow-lg">
-      <h3 class="text-xl font-semibold mb-4">Select City</h3>
-      <select id="citySelect" class="p-3 border rounded-xl w-full focus:ring-2 focus:ring-blue-500">
+    <div class="route-card">
+      <h3 class="text-lg font-semibold mb-3">Select City</h3>
+      <select id="citySelect" class="p-2 border rounded-xl w-full focus:ring-2 focus:ring-blue-500">
         <option value="Cebu City" selected>Cebu City</option>
       </select>
     </div>
 
     <!-- Directions Input -->
-    <div class="bg-white p-6 rounded-xl shadow-lg">
-      <h3 class="text-xl font-semibold mb-4">Get Directions</h3>
-      <form id="routeForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input type="text" id="pointA" placeholder="Point A" class="p-3 border rounded-xl w-full focus:ring-2 focus:ring-blue-500" required />
-        <input type="text" id="pointB" placeholder="Point B" class="p-3 border rounded-xl w-full focus:ring-2 focus:ring-blue-500" required />
-        <button type="submit" class="bg-blue-600 text-white rounded-xl p-3 hover:bg-blue-700 transition font-semibold">Show Route</button>
+    <div class="route-card">
+      <h3 class="text-lg font-semibold mb-3">Get Directions</h3>
+      <form id="routeForm" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <input type="text" id="pointA" placeholder="Point A" class="p-2 border rounded-xl w-full focus:ring-2 focus:ring-blue-500" required>
+        <input type="text" id="pointB" placeholder="Point B" class="p-2 border rounded-xl w-full focus:ring-2 focus:ring-blue-500" required>
+        <button type="submit" class="bg-blue-600 text-white rounded-xl p-2 hover:bg-blue-700 transition font-semibold">Show Route</button>
       </form>
     </div>
 
-    <!-- Two Columns: Map + Transit Instructions -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Left Column: Map -->
-      <div id="map" class="w-full h-[500px] rounded-xl shadow-lg"></div>
-
-      <!-- Right Column: Transit Instructions -->
-      <div id="transitInfo" class="bg-white p-6 rounded-xl shadow-lg overflow-y-auto max-h-[500px]">
-        <h3 class="text-xl font-semibold mb-4">What to Ride</h3>
-        <ul id="transitSteps" class="space-y-4 text-gray-700"></ul>
+    <!-- Map + Timeline -->
+    <div class="md:flex md:space-x-6 space-y-4 md:space-y-0">
+      <div class="flex-1 map-container route-card">
+        <div id="map" class="h-full w-full"></div>
+      </div>
+      <div class="flex-1 route-card overflow-y-auto" style="max-height: 500px;">
+        <h3 class="text-lg font-semibold mb-3">Route Timeline</h3>
+        <ul id="transitSteps" class="space-y-3 text-gray-700"></ul>
       </div>
     </div>
   </main>
 </div>
 
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
-    authDomain: "sugboride.firebaseapp.com",
-    databaseURL: "https://sugboride-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "sugboride",
-    storageBucket: "sugboride.firebasestorage.app",
-    messagingSenderId: "104362918043",
-    appId: "1:104362918043:web:19a07d398689f6aa61c63e",
-    measurementId: "G-SW0TN1HJG1"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const database = firebase.database();
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
+  authDomain: "sugboride.firebaseapp.com",
+  databaseURL: "https://sugboride-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sugboride",
+  storageBucket: "sugboride.firebasestorage.app",
+  messagingSenderId: "104362918043",
+  appId: "1:104362918043:web:19a07d398689f6aa61c63e",
+  measurementId: "G-SW0TN1HJG1"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
 
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      document.getElementById('userEmail').textContent = user.email;
-      database.ref('users/' + user.uid).once('value').then(snapshot => {
-        const firstName = snapshot.val()?.firstName || user.email;
-        document.getElementById('welcomeMessage').textContent = `Welcome, ${firstName}!`;
+// Auth
+auth.onAuthStateChanged(user => {
+  if(user){
+    document.getElementById('userEmail').textContent = user.email;
+    database.ref('users/' + user.uid).once('value').then(snapshot=>{
+      const firstName = snapshot.val()?.firstName || user.email;
+      document.getElementById('welcomeMessage').textContent = `Welcome, ${firstName}!`;
+    });
+  } else window.location.href = "login.html";
+});
+document.getElementById('logoutBtn')?.addEventListener('click',()=>auth.signOut().then(()=>window.location.href="login.html"));
+document.getElementById('mobileLogoutBtn')?.addEventListener('click',()=>auth.signOut().then(()=>window.location.href="login.html"));
+
+// Mobile Emergency Dropdown
+const mobileEmergencyBtn = document.getElementById("mobileEmergencyBtn");
+const mobileEmergencyDropdown = document.getElementById("mobileEmergencyDropdown");
+mobileEmergencyBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  mobileEmergencyDropdown.classList.toggle("hidden");
+});
+document.addEventListener("click", () => {
+  if (!mobileEmergencyDropdown.classList.contains("hidden")) {
+    mobileEmergencyDropdown.classList.add("hidden");
+  }
+});
+
+// Google Maps
+let map, directionsService, directionsRenderer;
+let markerA=null, markerB=null;
+let autocompleteA, autocompleteB;
+
+function initMap(){
+  const mapStyle = [{elementType:'geometry',stylers:[{color:'#f5f5f5'}]}];
+  map = new google.maps.Map(document.getElementById("map"),{
+    center:{lat:10.3157,lng:123.8854}, zoom:12, styles:mapStyle, disableDefaultUI:true
+  });
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer({ map, polylineOptions:{ strokeColor:'#1d4ed8', strokeWeight:6 } });
+  initAutocomplete();
+}
+
+function initAutocomplete(){
+  const bounds = new google.maps.LatLngBounds({ lat:10.232,lng:123.750 }, { lat:10.500,lng:124.000 });
+  autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { bounds, strictBounds:true, componentRestrictions:{country:"PH"}, fields:["geometry","name"] });
+  autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { bounds, strictBounds:true, componentRestrictions:{country:"PH"}, fields:["geometry","name"] });
+
+  autocompleteA.addListener("place_changed",()=>{const place=autocompleteA.getPlace(); if(!place.geometry)return; if(markerA) markerA.setMap(null); markerA=new google.maps.Marker({map,position:place.geometry.location,label:"A"}); map.panTo(place.geometry.location);});
+  autocompleteB.addListener("place_changed",()=>{const place=autocompleteB.getPlace(); if(!place.geometry)return; if(markerB) markerB.setMap(null); markerB=new google.maps.Marker({map,position:place.geometry.location,label:"B"}); map.panTo(place.geometry.location);});
+}
+
+document.getElementById("citySelect").addEventListener("change",initAutocomplete);
+window.onload=initMap;
+
+// Route Form
+document.getElementById("routeForm").addEventListener("submit",(e)=>{
+  e.preventDefault();
+  const pointA=document.getElementById("pointA").value;
+  const pointB=document.getElementById("pointB").value;
+  if(!pointA||!pointB)return;
+
+  directionsService.route({
+    origin: pointA,
+    destination: pointB,
+    travelMode:'TRANSIT',
+    transitOptions:{modes:['BUS','RAIL'], routingPreference:'FEWER_TRANSFERS'},
+    provideRouteAlternatives:true
+  },(result,status)=>{
+    if(status==='OK'){
+      const routes=result.routes;
+      routes.sort((a,b)=>a.legs[0].steps.filter(s=>s.travel_mode==="WALKING").reduce((sum,s)=>sum+s.distance.value,0)-
+                          b.legs[0].steps.filter(s=>s.travel_mode==="WALKING").reduce((sum,s)=>sum+s.distance.value,0));
+
+      const transitStepsList=document.getElementById("transitSteps");
+      transitStepsList.innerHTML="";
+
+      directionsRenderer.setDirections({routes:[routes[0]]});
+      routes[0].legs[0].steps.forEach(step=>{
+        const li=document.createElement("li");
+        li.classList.add("border-l-2","border-blue-400","pl-4","relative","before:absolute","before:-left-2","before:w-2","before:h-2","before:rounded-full","before:bg-blue-400","before:top-1","mb-2");
+        if(step.travel_mode==="WALKING"){
+          li.innerHTML=`<span class="font-semibold">🚶 Walk</span>: ${step.instructions} <br><span class="text-sm text-gray-500">About ${step.duration.text}, ${step.distance.text}</span>`;
+        } else if(step.travel_mode==="TRANSIT"){
+          const t=step.transit;
+          li.innerHTML=`<span class="font-semibold">${t.line.vehicle.name} ${t.line.short_name||''}</span> <br>Board at: <span class="font-medium">${t.departure_stop.name}</span> <br>Alight at: <span class="font-medium">${t.arrival_stop.name}</span> <br>Duration: ${step.duration.text}`;
+        }
+        transitStepsList.appendChild(li);
       });
-    } else {
-      window.location.href = "login.html";
-    }
+    } else alert("Transit directions request failed: "+status);
   });
-
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    auth.signOut().then(() => window.location.href = "login.html");
-  });
-
-  // Google Maps
-  let map, directionsService, directionsRenderer;
-  let markerA = null, markerB = null;
-  let autocompleteA, autocompleteB;
-
-  function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), { center: { lat: 10.3157, lng: 123.8854 }, zoom: 12 });
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
-    initAutocomplete();
-  }
-
-  function initAutocomplete() {
-    const bounds = new google.maps.LatLngBounds({ lat: 10.232, lng: 123.750 }, { lat: 10.500, lng: 124.000 });
-    if (markerA) markerA.setMap(null);
-    if (markerB) markerB.setMap(null);
-
-    autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { bounds, strictBounds: true, componentRestrictions: { country: "PH" }, fields: ["geometry", "name"] });
-    autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { bounds, strictBounds: true, componentRestrictions: { country: "PH" }, fields: ["geometry", "name"] });
-
-    autocompleteA.addListener("place_changed", () => {
-      const place = autocompleteA.getPlace(); if (!place.geometry) return;
-      if (markerA) markerA.setMap(null);
-      markerA = new google.maps.Marker({ map, position: place.geometry.location, label: "A" });
-      map.panTo(place.geometry.location);
-    });
-
-    autocompleteB.addListener("place_changed", () => {
-      const place = autocompleteB.getPlace(); if (!place.geometry) return;
-      if (markerB) markerB.setMap(null);
-      markerB = new google.maps.Marker({ map, position: place.geometry.location, label: "B" });
-      map.panTo(place.geometry.location);
-    });
-  }
-
-  document.getElementById("citySelect").addEventListener("change", initAutocomplete);
-  window.onload = initMap;
-
-  const routeForm = document.getElementById("routeForm");
-  routeForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const pointA = document.getElementById("pointA").value;
-    const pointB = document.getElementById("pointB").value;
-    if (!pointA || !pointB) return;
-
-    const transitStepsList = document.getElementById("transitSteps");
-    transitStepsList.innerHTML = "";
-
-    directionsService.route({
-      origin: pointA,
-      destination: pointB,
-      travelMode: 'TRANSIT'
-    }, (result, status) => {
-      if (status === 'OK') {
-        directionsRenderer.setDirections(result);
-
-        const steps = result.routes[0].legs[0].steps;
-        steps.forEach((step, index) => {
-          const li = document.createElement("li");
-          if (step.travel_mode === "WALKING") {
-            li.innerHTML = `🚶 Walk for ${step.distance.text} from ${step.start_location.lat().toFixed(5)},${step.start_location.lng().toFixed(5)}`;
-          } else if (step.travel_mode === "TRANSIT") {
-            const transit = step.transit;
-            li.innerHTML = `<strong>${transit.line.vehicle.name}</strong> ${transit.line.short_name ? "(" + transit.line.short_name + ")" : ""} <br>
-              Board at: ${transit.departure_stop.name} <br>
-              Alight at: ${transit.arrival_stop.name} <br>
-              Duration: ${step.duration.text}`;
-          }
-          transitStepsList.appendChild(li);
-        });
-      } else {
-        alert("Transit directions request failed: " + status);
-      }
-    });
-  });
+});
 </script>
 </body>
 </html>
