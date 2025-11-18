@@ -1,93 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SugboRide</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugbo Ride - Cebu's Premier Transport PWA</title>
+    <meta name="description" content="Fast, safe, and reliable rides around Cebu City. Install the Sugbo Ride PWA today.">
+    
+    <meta name="theme-color" content="#0052CC">
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#2563eb" />
-  <link rel="apple-touch-icon" href="assets/Logo.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="SugboRide" />
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary-blue: #0052CC; /* Strong Royal Blue */
+            --dark-blue: #0747A6;
+            --light-blue: #DEEBFF;
+            --accent-blue: #2684FF;
+            --text-dark: #172B4D;
+            --text-light: #F4F5F7;
+            --white: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0, 82, 204, 0.15);
+        }
 
-  <!-- Firebase -->
-  <script type="module" src="./firebase-config.js" defer></script>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            background-color: #FAFBFC;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-  <!-- Service Worker -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(0, 82, 204, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-blue);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-blue);
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; } /* Simple hide for mobile demo */
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative Circle */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 600px;
+            height: 600px;
+            background: var(--light-blue);
+            border-radius: 50%;
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .hero-content h1 span {
+            color: var(--primary-blue);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #5E6C84;
+            margin-bottom: 30px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 400px;
+            display: block;
+            margin: 0 auto;
+            /* Phone Mockup Shadow */
+            filter: drop-shadow(0 20px 40px rgba(0, 82, 204, 0.25));
+            border-radius: 30px;
+        }
+
+        /* --- FEATURES --- */
+        .features {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            padding: 40px;
+            border-radius: 16px;
+            background: #F4F5F7;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            transform: translateY(-5px);
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.5rem;
+        }
+
+        /* --- PWA INSTALL INSTRUCTIONS --- */
+        .pwa-install {
+            padding: 80px 0;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .pwa-install h2 {
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+
+        .pwa-steps {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            width: 300px;
+            backdrop-filter: blur(5px);
+        }
+
+        .step strong {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #FFD700; /* Gold for contrast */
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--text-dark);
+            color: #B3BAC5;
+            padding: 50px 0;
+            text-align: center;
+        }
+
+        footer p {
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero::before { width: 300px; height: 300px; }
+        }
+    </style>
 </head>
+<body>
 
-<body
-  class="bg-gradient-to-br from-blue-600 via-indigo-500 to-purple-600 min-h-screen flex items-center justify-center p-4">
-  <div
-    class="backdrop-blur-xl bg-white/10 shadow-2xl rounded-3xl p-8 w-full max-w-md text-center text-white border border-white/20 animate-fade-in">
-    <img src="assets/Logo.png" alt="Logo" class="w-24 mx-auto mb-4 drop-shadow-lg">
-    <h1 class="text-3xl font-bold mb-2">Welcome to SugboRide</h1>
-    <p class="text-white/70 mb-6">Your modern commuter companion</p>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                    Sugbo Ride
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#drivers">Become a Driver</a></li>
+                    <li><a href="#support">Support</a></li>
+                </ul>
+                <button class="btn btn-primary" id="installBtn">Install App</button>
+            </nav>
+        </div>
+    </header>
 
-    <div class="flex mb-6 bg-white/10 rounded-xl overflow-hidden">
-      <button id="loginTab" class="w-1/2 py-2 bg-white/20 font-semibold">Login</button>
-      <button id="signupTab" class="w-1/2 py-2 text-white/70 hover:bg-white/20">Sign Up</button>
-    </div>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <h1>Move Around <br><span>Cebu City</span> Your Way.</h1>
+                    <p>The most affordable, safe, and reliable ride-hailing PWA in the Visayas. No huge downloads required—just add to home screen and go!</p>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary">Book a Ride</button>
+                        <button class="btn btn-outline">View Map</button>
+                    </div>
+                    <p style="font-size: 0.85rem; margin-top: 15px; opacity: 0.7;">*Works on iOS and Android instantly</p>
+                </div>
+                <div class="hero-image">
+                    <img src="https://placehold.co/380x700/0052CC/FFFFFF?text=Sugbo+Ride+App+UI" alt="Sugbo Ride App Interface">
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Login Form -->
-    <form id="loginForm" class="space-y-4">
-      <input id="loginEmail" type="email" placeholder="Email"
-        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white" />
-      <input id="loginPassword" type="password" placeholder="Password"
-        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white" />
-      <button type="submit"
-        class="w-full py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-gray-100 transition transform hover:scale-105">
-        Login
-      </button>
-    </form>
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose Sugbo Ride?</h2>
+                <p>Built by Cebuanos, for Cebuanos.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon-box">₱</div>
+                    <h3>Affordable Rates</h3>
+                    <p>Fair pricing with no hidden surges. We offer the best rates from IT Park to the Airport and everywhere in between.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-box">⚡</div>
+                    <h3>Lightweight PWA</h3>
+                    <p>Don't waste storage space. Our app runs directly in your browser but feels exactly like a native app.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-box">🛡️</div>
+                    <h3>Verified Drivers</h3>
+                    <p>Safety first. All our drivers undergo strict background checks and vehicle inspections.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Signup Form -->
-    <form id="signupForm" class="space-y-4 hidden">
-      <input id="signupEmail" type="email" placeholder="Email"
-        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white" />
-      <input id="signupPassword" type="password" placeholder="Password"
-        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white" />
-      <button type="submit"
-        class="w-full py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-gray-100 transition transform hover:scale-105">
-        Sign Up
-      </button>
-    </form>
+    <section class="pwa-install">
+        <div class="container">
+            <h2>Get the App in Seconds</h2>
+            <p>No App Store needed. Follow these simple steps:</p>
+            
+            <div class="pwa-steps">
+                <div class="step">
+                    <strong>🤖 For Android</strong>
+                    <p>Tap the menu icon (three dots) in Chrome and select <b>"Install App"</b> or "Add to Home Screen".</p>
+                </div>
+                <div class="step">
+                    <strong>🍎 For iOS</strong>
+                    <p>Tap the <b>"Share"</b> button in Safari and select <b>"Add to Home Screen"</b> from the list.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <p id="statusMessage" class="mt-4 text-sm text-white/80"></p>
-  </div>
+    <footer>
+        <div class="container">
+            <div class="logo" style="justify-content: center; color: white; margin-bottom: 20px;">
+                Sugbo Ride
+            </div>
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Driver Login</a>
+            </div>
+            <p>&copy; 2023 Sugbo Ride Philippines. All rights reserved.</p>
+            <p style="opacity: 0.5; font-size: 0.8rem;">Made with ❤️ in Cebu City</p>
+        </div>
+    </footer>
 
-  <script>
-    const loginTab = document.getElementById("loginTab");
-    const signupTab = document.getElementById("signupTab");
-    const loginForm = document.getElementById("loginForm");
-    const signupForm = document.getElementById("signupForm");
+    <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
 
-    loginTab.addEventListener("click", () => {
-      loginForm.classList.remove("hidden");
-      signupForm.classList.add("hidden");
-      loginTab.classList.add("bg-white/20");
-      signupTab.classList.remove("bg-white/20");
-    });
+        // Listen for the 'beforeinstallprompt' event
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI notify the user they can install the PWA
+            installBtn.style.display = 'inline-block';
+        });
 
-    signupTab.addEventListener("click", () => {
-      signupForm.classList.remove("hidden");
-      loginForm.classList.add("hidden");
-      signupTab.classList.add("bg-white/20");
-      loginTab.classList.remove("bg-white/20");
-    });
-  </script>
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                // We've used the prompt, and can't use it again, throw it away
+                deferredPrompt = null;
+            } else {
+                // Fallback for when the browser doesn't support automatic prompting (like iOS)
+                alert("To install, tap 'Share' (iOS) or 'Menu' (Android) and select 'Add to Home Screen'.");
+            }
+        });
+    </script>
 </body>
-
 </html>
