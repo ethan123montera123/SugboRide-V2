@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fire Emergencies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Bottom Navbar -->
+  <nav
+    class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center">
+    <a href="dashboard.html"
+      class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
+      </svg>
+      <span class="text-xs font-medium">Dashboard</span>
+    </a>
+
+    <div class="relative group">
+      <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01M12 3C6.48 3 2 7.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 3 12 3z" />
+        </svg>
+        <span class="text-xs font-medium">Emergency</span>
+      </button>
+      <div
+        class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border rounded-xl shadow-lg py-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
+        <a href="fire.html"
+          class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">🔥 Fire</a>
+        <a href="earthquake.html"
+          class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">🌍 Earthquake</a>
+      </div>
+    </div>
+
+    <a href="account.html"
+      class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M5.121 17.804A6 6 0 0 1 12 15a6 6 0 0 1 6.879 2.804M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z" />
+      </svg>
+      <span class="text-xs font-medium">Account</span>
+    </a>
+
+    <a href="logout.html"
+      class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+      </svg>
+      <span class="text-xs font-medium">Logout</span>
+    </a>
+  </nav>
+
+  <!-- Spacing below navbar -->
+  <div class="h-24"></div>
+
+  <!-- Fire Incidents Content -->
+  <div class="p-6 max-w-3xl mx-auto flex-1 flex flex-col">
+    <h1 class="text-3xl font-bold text-red-600 mb-6 text-center">Fire Emergency Incidents</h1>
+
+    <div id="fireList" class="flex flex-col gap-4">
+      <p class="text-gray-500 text-center">Loading fire incidents...</p>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
+      authDomain: "sugboride.firebaseapp.com",
+      databaseURL: "https://sugboride-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "sugboride",
+      storageBucket: "sugboride.firebasestorage.app",
+      messagingSenderId: "104362918043",
+      appId: "1:104362918043:web:19a07d398689f6aa61c63e",
+      measurementId: "G-SW0TN1HJG1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const fireRef = ref(db, 'fireIncidents');
+
+    const fireList = document.getElementById('fireList');
+
+    // Load fire incidents from Firebase
+    onValue(fireRef, snapshot => {
+      fireList.innerHTML = '';
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        Object.keys(data).forEach(key => {
+          const incident = data[key];
+          const div = document.createElement('div');
+          div.className = "bg-white p-4 rounded-2xl shadow flex justify-between items-center";
+          div.innerHTML = `
+            <div>
+              <p class="font-semibold text-red-600">${incident.title}</p>
+              <p class="text-gray-600 text-sm">${incident.location} - ${incident.time}</p>
+            </div>
+            <span class="text-gray-500">${incident.status}</span>
+          `;
+          fireList.appendChild(div);
+        });
+      } else {
+        fireList.innerHTML = `<p class="text-gray-500 text-center">No fire incidents reported.</p>`;
+      }
+    });
+  </script>
+
+</body>
+
+</html>
