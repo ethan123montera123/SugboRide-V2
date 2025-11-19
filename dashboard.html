@@ -165,14 +165,15 @@
         class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center">
 
         <!-- Dashboard -->
-        <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+        <a href="dashboard.html"
+            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
             </svg>
             <span class="text-xs font-medium">Dashboard</span>
-        </button>
+        </a>
 
         <!-- Emergency Dropdown -->
         <div class="relative group">
@@ -187,7 +188,8 @@
             <!-- Dropdown Menu -->
             <div
                 class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border rounded-xl shadow-lg py-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+                <a href="fire.html"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -195,7 +197,8 @@
                     </svg>
                     Fire
                 </a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+                <a href="earthquake.html"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -207,24 +210,26 @@
         </div>
 
         <!-- Account -->
-        <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+        <a href="account.html"
+            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M5.121 17.804A6 6 0 0 1 12 15a6 6 0 0 1 6.879 2.804M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z" />
             </svg>
             <span class="text-xs font-medium">Account</span>
-        </button>
+        </a>
 
         <!-- Logout -->
-        <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+        <a href="logout.html"
+            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
             </svg>
             <span class="text-xs font-medium">Logout</span>
-        </button>
+        </a>
     </nav>
 
 
