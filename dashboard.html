@@ -3,216 +3,225 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sugbo Ride Dashboard</title>
+<title>City-Restricted Route Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places"></script>
 <style>
-  #map { width: 100%; height: 100%; border-radius: 1rem; }
-  .map-container { height: 400px; }
-  .route-card { background: #fff; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 1rem; }
+  body { font-family: 'Inter', sans-serif; }
+
+  #map {
+    width: 100%;
+    height: 100%;
+    min-height: 200px; /* minimum height on mobile */
+    border-radius: 1rem;
+  }
+
+  #directionsPanel { overflow-y: auto; }
+
+  #directionsText {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  #directionsText .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    background-color: #f9fafb;
+    transition: background 0.2s;
+  }
+
+  #directionsText .step:hover { background-color: #eef2ff; }
+
+  #directionsText .step-icon {
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    background-color: #3b82f6;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+  }
+
+  #directionsText .step-info { flex: 1; }
+
+  #directionsText .step-info .mode {
+    font-weight: 600;
+    color: #1e40af;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  #directionsText .step-info .details {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-top: 0.25rem;
+  }
+
+  .transport-icon { width: 1rem; height: 1rem; display: inline-block; }
+
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .inputs-container { flex-direction: column; gap: 2; }
+    #pointA, #pointB, #getRoute { width: 100%; }
+  }
+
+  @media (max-width: 768px) {
+    #map { height: 250px; min-height: 250px; }
+    #directionsPanel { height: auto; max-height: 250px; }
+  }
+
+  @media (max-width: 480px) {
+    #map { height: 200px; min-height: 200px; }
+    #directionsPanel { max-height: 200px; }
+  }
 </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="bg-gray-100 h-screen">
 
-<!-- Desktop Top Navbar -->
-<nav class="hidden md:flex bg-blue-600 text-white px-6 py-4 justify-between items-center">
-  <div class="flex items-center space-x-4">
-    <h1 class="text-2xl font-bold">Sugbo Ride</h1>
-  </div>
-  <div class="flex items-center space-x-4">
-    <a href="#" class="block py-2 px-3 rounded bg-blue-700 md:bg-blue-600 transition font-semibold">Dashboard</a>
+<!-- City Selection and Input Form -->
+<div class="p-4 flex flex-col md:flex-row gap-3 items-center inputs-container">
+  <select id="citySelect" class="flex-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <option value="" disabled selected>Select your city</option>
+    <option value="Cebu City">Cebu City</option>
+    <option value="Manila">Manila</option>
+  </select>
 
-    <!-- Emergency Dropdown -->
-    <div class="relative group">
-      <button class="block py-2 px-3 rounded hover:bg-blue-500 transition flex items-center">
-        Emergency <span class="ml-1">▼</span>
-      </button>
-      <div class="absolute left-0 mt-1 w-40 bg-white text-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-opacity z-50">
-        <a href="#" class="block px-4 py-2 hover:bg-gray-200">Earthquake</a>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-200">Fire</a>
-      </div>
-    </div>
-
-    <a href="#" class="block py-2 px-3 rounded hover:bg-blue-500 transition">Account</a>
-    <a href="#" id="logoutBtn" class="block py-2 px-3 rounded hover:bg-blue-500 transition">Logout</a>
-  </div>
-</nav>
-
-<!-- Mobile Bottom Navbar -->
-<nav class="fixed bottom-0 left-0 right-0 bg-blue-600 text-white md:hidden flex justify-around items-center py-2 shadow-inner z-50">
-  <a href="#" class="flex flex-col items-center text-sm font-semibold text-white">
-    <span>🏠</span>
-    <span>Dashboard</span>
-  </a>
-  <div class="relative flex flex-col items-center">
-    <button id="mobileEmergencyBtn" class="flex flex-col items-center text-sm font-semibold focus:outline-none">
-      <span>⚠️</span>
-      <span>Emergency</span>
-    </button>
-    <div id="mobileEmergencyDropdown" class="absolute bottom-10 flex flex-col bg-white text-gray-800 rounded shadow-lg hidden w-32">
-      <a href="#" class="block px-4 py-2 hover:bg-gray-200">Earthquake</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-200">Fire</a>
-    </div>
-  </div>
-  <a href="#" class="flex flex-col items-center text-sm font-semibold text-white">
-    <span>👤</span>
-    <span>Account</span>
-  </a>
-  <a href="#" id="mobileLogoutBtn" class="flex flex-col items-center text-sm font-semibold text-white">
-    <span>🚪</span>
-    <span>Logout</span>
-  </a>
-</nav>
-
-<!-- Main Content -->
-<div class="flex-1 p-4 md:p-6 overflow-x-hidden mb-16 md:mb-0">
-
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
-    <h2 class="text-2xl md:text-3xl font-bold text-gray-800" id="welcomeMessage">Dashboard</h2>
-    <span id="userEmail" class="text-gray-600"></span>
-  </header>
-
-  <main class="space-y-6">
-    <!-- City Selector -->
-    <div class="route-card">
-      <h3 class="text-lg font-semibold mb-3">Select City</h3>
-      <select id="citySelect" class="p-2 border rounded-xl w-full focus:ring-2 focus:ring-blue-500">
-        <option value="Cebu City" selected>Cebu City</option>
-      </select>
-    </div>
-
-    <!-- Directions Input -->
-    <div class="route-card">
-      <h3 class="text-lg font-semibold mb-3">Get Directions</h3>
-      <form id="routeForm" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <input type="text" id="pointA" placeholder="Point A" class="p-2 border rounded-xl w-full focus:ring-2 focus:ring-blue-500" required>
-        <input type="text" id="pointB" placeholder="Point B" class="p-2 border rounded-xl w-full focus:ring-2 focus:ring-blue-500" required>
-        <button type="submit" class="bg-blue-600 text-white rounded-xl p-2 hover:bg-blue-700 transition font-semibold">Show Route</button>
-      </form>
-    </div>
-
-    <!-- Map + Timeline -->
-    <div class="md:flex md:space-x-6 space-y-4 md:space-y-0">
-      <div class="flex-1 map-container route-card">
-        <div id="map" class="h-full w-full"></div>
-      </div>
-      <div class="flex-1 route-card overflow-y-auto" style="max-height: 500px;">
-        <h3 class="text-lg font-semibold mb-3">Route Timeline</h3>
-        <ul id="transitSteps" class="space-y-3 text-gray-700"></ul>
-      </div>
-    </div>
-  </main>
+  <input id="pointA" type="text" placeholder="Point A" class="flex-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400" disabled>
+  <input id="pointB" type="text" placeholder="Point B" class="flex-1 p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400" disabled>
+  <button id="getRoute" class="bg-blue-500 text-white py-3 px-5 rounded-xl hover:bg-blue-600 transition" disabled>Get Route</button>
 </div>
 
+<!-- Two-column layout -->
+<div class="flex flex-col md:flex-row h-[calc(100vh-160px)] md:h-[calc(100vh-180px)] p-4 gap-4">
+  <!-- Left: Google Map -->
+  <div class="flex-1 bg-white rounded-2xl shadow overflow-hidden flex flex-col">
+    <div id="map" class="flex-1 min-h-[200px]"></div>
+  </div>
+
+  <!-- Right: Public Transportation Directions -->
+  <div class="w-full md:w-1/3 bg-white rounded-2xl shadow p-4 flex flex-col" id="directionsPanel">
+    <h2 class="font-semibold text-xl mb-4 text-gray-700 border-b pb-2">Public Transport Directions</h2>
+    <div id="directionsText" class="text-gray-700 text-sm">
+      <p class="text-gray-500">Select your city and enter Point A and Point B, then click <span class="font-semibold">Get Route</span>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Mobile-Style Navbar -->
+<nav class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center">
+  <button class="flex flex-col items-center text-gray-500 hover:text-blue-500 transition-colors duration-200">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18" />
+    </svg>
+    <span class="text-xs font-medium">Home</span>
+  </button>
+  <button class="flex flex-col items-center text-gray-500 hover:text-blue-500 transition-colors duration-200">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    <span class="text-xs font-medium">Add</span>
+  </button>
+  <button class="flex flex-col items-center text-gray-500 hover:text-blue-500 transition-colors duration-200">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
+    <span class="text-xs font-medium">Tasks</span>
+  </button>
+  <button class="flex flex-col items-center text-gray-500 hover:text-blue-500 transition-colors duration-200">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4z" />
+    </svg>
+    <span class="text-xs font-medium">Account</span>
+  </button>
+</nav>
+
 <script>
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
-  authDomain: "sugboride.firebaseapp.com",
-  databaseURL: "https://sugboride-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "sugboride",
-  storageBucket: "sugboride.firebasestorage.app",
-  messagingSenderId: "104362918043",
-  appId: "1:104362918043:web:19a07d398689f6aa61c63e",
-  measurementId: "G-SW0TN1HJG1"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const database = firebase.database();
-
-// Auth
-auth.onAuthStateChanged(user => {
-  if(user){
-    document.getElementById('userEmail').textContent = user.email;
-    database.ref('users/' + user.uid).once('value').then(snapshot=>{
-      const firstName = snapshot.val()?.firstName || user.email;
-      document.getElementById('welcomeMessage').textContent = `Welcome, ${firstName}!`;
-    });
-  } else window.location.href = "login.html";
-});
-document.getElementById('logoutBtn')?.addEventListener('click',()=>auth.signOut().then(()=>window.location.href="login.html"));
-document.getElementById('mobileLogoutBtn')?.addEventListener('click',()=>auth.signOut().then(()=>window.location.href="login.html"));
-
-// Mobile Emergency Dropdown
-const mobileEmergencyBtn = document.getElementById("mobileEmergencyBtn");
-const mobileEmergencyDropdown = document.getElementById("mobileEmergencyDropdown");
-mobileEmergencyBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  mobileEmergencyDropdown.classList.toggle("hidden");
-});
-document.addEventListener("click", () => {
-  if (!mobileEmergencyDropdown.classList.contains("hidden")) {
-    mobileEmergencyDropdown.classList.add("hidden");
-  }
-});
-
-// Google Maps
 let map, directionsService, directionsRenderer;
-let markerA=null, markerB=null;
 let autocompleteA, autocompleteB;
+let geocoder;
 
-function initMap(){
-  const mapStyle = [{elementType:'geometry',stylers:[{color:'#f5f5f5'}]}];
-  map = new google.maps.Map(document.getElementById("map"),{
-    center:{lat:10.3157,lng:123.8854}, zoom:12, styles:mapStyle, disableDefaultUI:true
+function initMap() {
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 10.3157, lng: 123.8854 }, // Cebu City default
+    zoom: 13,
   });
   directionsService = new google.maps.DirectionsService();
-  directionsRenderer = new google.maps.DirectionsRenderer({ map, polylineOptions:{ strokeColor:'#1d4ed8', strokeWeight:6 } });
-  initAutocomplete();
+  directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+  geocoder = new google.maps.Geocoder();
 }
 
-function initAutocomplete(){
-  const bounds = new google.maps.LatLngBounds({ lat:10.232,lng:123.750 }, { lat:10.500,lng:124.000 });
-  autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), { bounds, strictBounds:true, componentRestrictions:{country:"PH"}, fields:["geometry","name"] });
-  autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), { bounds, strictBounds:true, componentRestrictions:{country:"PH"}, fields:["geometry","name"] });
+document.getElementById("citySelect").addEventListener("change", () => {
+  const city = document.getElementById("citySelect").value;
+  if (!city) return;
+  document.getElementById("pointA").disabled = false;
+  document.getElementById("pointB").disabled = false;
+  document.getElementById("getRoute").disabled = false;
 
-  autocompleteA.addListener("place_changed",()=>{const place=autocompleteA.getPlace(); if(!place.geometry)return; if(markerA) markerA.setMap(null); markerA=new google.maps.Marker({map,position:place.geometry.location,label:"A"}); map.panTo(place.geometry.location);});
-  autocompleteB.addListener("place_changed",()=>{const place=autocompleteB.getPlace(); if(!place.geometry)return; if(markerB) markerB.setMap(null); markerB=new google.maps.Marker({map,position:place.geometry.location,label:"B"}); map.panTo(place.geometry.location);});
+  geocoder.geocode({ address: city }, (results, status) => {
+    if (status === "OK" && results[0]) {
+      const bounds = results[0].geometry.viewport;
+      const options = { bounds: bounds, strictBounds: true, fields: ["name", "geometry"], types: ["establishment", "geocode"] };
+      autocompleteA = new google.maps.places.Autocomplete(document.getElementById("pointA"), options);
+      autocompleteB = new google.maps.places.Autocomplete(document.getElementById("pointB"), options);
+      map.fitBounds(bounds);
+    }
+  });
+});
+
+function getTransportIcon(mode) {
+  switch(mode) { case "WALKING": return "🚶"; case "TRANSIT": return "🚌"; case "RAIL": return "🚆"; default: return "❓"; }
 }
 
-document.getElementById("citySelect").addEventListener("change",initAutocomplete);
-window.onload=initMap;
-
-// Route Form
-document.getElementById("routeForm").addEventListener("submit",(e)=>{
-  e.preventDefault();
-  const pointA=document.getElementById("pointA").value;
-  const pointB=document.getElementById("pointB").value;
-  if(!pointA||!pointB)return;
+document.getElementById("getRoute").addEventListener("click", () => {
+  const pointA = document.getElementById("pointA").value;
+  const pointB = document.getElementById("pointB").value;
+  if (!pointA || !pointB) { alert("Please enter both Point A and Point B"); return; }
 
   directionsService.route({
     origin: pointA,
     destination: pointB,
-    travelMode:'TRANSIT',
-    transitOptions:{modes:['BUS','RAIL'], routingPreference:'FEWER_TRANSFERS'},
-    provideRouteAlternatives:true
-  },(result,status)=>{
-    if(status==='OK'){
-      const routes=result.routes;
-      routes.sort((a,b)=>a.legs[0].steps.filter(s=>s.travel_mode==="WALKING").reduce((sum,s)=>sum+s.distance.value,0)-
-                          b.legs[0].steps.filter(s=>s.travel_mode==="WALKING").reduce((sum,s)=>sum+s.distance.value,0));
-
-      const transitStepsList=document.getElementById("transitSteps");
-      transitStepsList.innerHTML="";
-
-      directionsRenderer.setDirections({routes:[routes[0]]});
-      routes[0].legs[0].steps.forEach(step=>{
-        const li=document.createElement("li");
-        li.classList.add("border-l-2","border-blue-400","pl-4","relative","before:absolute","before:-left-2","before:w-2","before:h-2","before:rounded-full","before:bg-blue-400","before:top-1","mb-2");
-        if(step.travel_mode==="WALKING"){
-          li.innerHTML=`<span class="font-semibold">🚶 Walk</span>: ${step.instructions} <br><span class="text-sm text-gray-500">About ${step.duration.text}, ${step.distance.text}</span>`;
-        } else if(step.travel_mode==="TRANSIT"){
-          const t=step.transit;
-          li.innerHTML=`<span class="font-semibold">${t.line.vehicle.name} ${t.line.short_name||''}</span> <br>Board at: <span class="font-medium">${t.departure_stop.name}</span> <br>Alight at: <span class="font-medium">${t.arrival_stop.name}</span> <br>Duration: ${step.duration.text}`;
-        }
-        transitStepsList.appendChild(li);
+    travelMode: google.maps.TravelMode.TRANSIT,
+  }, (response, status) => {
+    if (status === "OK") {
+      directionsRenderer.setDirections(response);
+      const steps = response.routes[0].legs[0].steps;
+      const container = document.getElementById("directionsText");
+      container.innerHTML = "";
+      steps.forEach((step, index) => {
+        const div = document.createElement("div");
+        div.className = "step";
+        let transportText = "";
+        let mode = step.travel_mode.toUpperCase();
+        const icon = getTransportIcon(mode);
+        if(step.transit) {
+          const lineName = step.transit.line.short_name || step.transit.line.name || "";
+          const vehicleType = step.transit.line.vehicle.type || "TRANSIT";
+          const depStop = step.transit.departure_stop ? step.transit.departure_stop.name : "";
+          const arrStop = step.transit.arrival_stop ? step.transit.arrival_stop.name : "";
+          transportText = `${vehicleType} ${lineName} from ${depStop} → ${arrStop}`;
+        } else { transportText = step.instructions.replace(/<[^>]*>?/gm, ""); }
+        div.innerHTML = `<div class="step-icon">${index+1}</div>
+          <div class="step-info"><div class="mode"><span class="transport-icon">${icon}</span> ${mode}</div>
+          <div class="details">${transportText} (${step.duration.text})</div></div>`;
+        container.appendChild(div);
       });
-    } else alert("Transit directions request failed: "+status);
+    } else { alert("Directions request failed: " + status); }
   });
 });
 </script>
+
+<script async
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&libraries=places&callback=initMap">
+</script>
+
 </body>
 </html>
