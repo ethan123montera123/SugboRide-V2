@@ -6,19 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fire Emergencies</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#2563eb">
-  <link rel="icon" href="icons/icon-192.png">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
   <!-- Bottom Navbar -->
   <nav
-    class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center">
+    class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 md:w-3/4 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center z-50">
     <a href="dashboard.html"
       class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
@@ -68,22 +62,55 @@
     </a>
   </nav>
 
-  <!-- Spacing below navbar -->
-  <div class="h-24"></div>
+  <!-- Main Content: Two Columns -->
+  <div class="flex-1 w-full px-4 md:px-8 py-6 max-w-full grid grid-cols-1 md:grid-cols-2 gap-6">
 
-  <!-- Fire Incidents Content -->
-  <div class="p-6 max-w-3xl mx-auto flex-1 flex flex-col">
-    <h1 class="text-3xl font-bold text-red-600 mb-6 text-center">Fire Emergency Incidents</h1>
-
-    <div id="fireList" class="flex flex-col gap-4">
-      <p class="text-gray-500 text-center">Loading fire incidents...</p>
+    <!-- Left Column: Report Fire -->
+    <div class="bg-white p-6 rounded-2xl shadow flex flex-col">
+      <h2 class="text-2xl font-bold text-red-600 mb-4 text-center">Report a Fire</h2>
+      <form id="reportForm" class="flex flex-col gap-3">
+        <input type="text" id="fireName" placeholder="Fire Name" required
+          class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400">
+        <input type="text" id="fireLocation" placeholder="Location" required
+          class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400">
+        <input type="date" id="fireDate" required
+          class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400">
+        <input type="time" id="fireTime" required
+          class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400">
+        <textarea id="fireDescription" placeholder="Description (optional)"
+          class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400"></textarea>
+        <button type="submit"
+          class="bg-red-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-red-700 transition-colors">Submit
+          Report</button>
+        <p id="reportMessage" class="text-sm text-green-600"></p>
+      </form>
     </div>
+
+    <!-- Right Column: Fire Incidents -->
+    <div class="flex flex-col">
+      <!-- Filters -->
+      <div class="flex flex-wrap justify-between gap-4 mb-4">
+        <select id="statusFilter"
+          class="px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+        <input type="text" id="locationFilter" placeholder="Search by location"
+          class="px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 flex-1">
+      </div>
+
+      <div id="fireList" class="flex flex-col gap-3 overflow-y-auto max-h-[60vh]">
+        <p class="text-gray-500 text-center">Loading fire incidents...</p>
+      </div>
+    </div>
+
   </div>
 
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+    import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
@@ -101,37 +128,82 @@
     const fireRef = ref(db, 'fireIncidents');
 
     const fireList = document.getElementById('fireList');
+    const statusFilter = document.getElementById('statusFilter');
+    const locationFilter = document.getElementById('locationFilter');
 
-    // Load fire incidents from Firebase
-    onValue(fireRef, snapshot => {
+    let fireData = {};
+
+    // Render Fire List (only Active and Resolved)
+    const renderFireList = () => {
       fireList.innerHTML = '';
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        Object.keys(data).forEach(key => {
-          const incident = data[key];
-          const div = document.createElement('div');
-          div.className = "bg-white p-4 rounded-2xl shadow flex justify-between items-center";
-          div.innerHTML = `
-            <div>
-              <p class="font-semibold text-red-600">${incident.title}</p>
-              <p class="text-gray-600 text-sm">${incident.location} - ${incident.time}</p>
-            </div>
-            <span class="text-gray-500">${incident.status}</span>
-          `;
-          fireList.appendChild(div);
-        });
-      } else {
-        fireList.innerHTML = `<p class="text-gray-500 text-center">No fire incidents reported.</p>`;
+      const statusValue = statusFilter.value.toLowerCase();
+      const locationValue = locationFilter.value.toLowerCase();
+
+      const filtered = Object.keys(fireData).filter(key => {
+        const incident = fireData[key];
+        const isStatusAllowed = incident.status === 'Active' || incident.status === 'Resolved';
+        const matchesStatus = statusValue === "" || (incident.status && incident.status.toLowerCase() === statusValue);
+        const matchesLocation = incident.location && incident.location.toLowerCase().includes(locationValue);
+        return isStatusAllowed && matchesStatus && matchesLocation;
+      });
+
+      if (filtered.length === 0) {
+        fireList.innerHTML = `<p class="text-gray-500 text-center">No fire incidents found.</p>`;
+        return;
       }
+
+      filtered.forEach(key => {
+        const incident = fireData[key];
+        const div = document.createElement('div');
+        div.className = "bg-white p-3 rounded-2xl shadow flex justify-between items-center hover:shadow-lg transition-shadow duration-200";
+        div.innerHTML = `
+          <div>
+            <p class="font-semibold text-red-600">${incident.title}</p>
+            <p class="text-gray-600 text-sm">${incident.location} - ${incident.date} ${incident.time}</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-white text-sm font-medium ${
+            incident.status === 'Active' ? 'bg-red-500' : 'bg-green-500'
+          }">${incident.status}</span>
+        `;
+        fireList.appendChild(div);
+      });
+    };
+
+    // Load Fire Incidents
+    onValue(fireRef, snapshot => {
+      fireData = snapshot.exists() ? snapshot.val() : {};
+      renderFireList();
+    });
+
+    statusFilter.addEventListener('change', renderFireList);
+    locationFilter.addEventListener('input', renderFireList);
+
+    // Handle Report Form
+    const reportForm = document.getElementById('reportForm');
+    const reportMessage = document.getElementById('reportMessage');
+
+    reportForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const newFire = {
+        title: document.getElementById('fireName').value,
+        location: document.getElementById('fireLocation').value,
+        date: document.getElementById('fireDate').value,
+        time: document.getElementById('fireTime').value,
+        description: document.getElementById('fireDescription').value,
+        status: 'Pending' // Admin will verify
+      };
+
+      push(fireRef, newFire).then(() => {
+        reportMessage.textContent = "Fire report submitted successfully!";
+        reportForm.reset();
+        setTimeout(() => reportMessage.textContent = "", 3000);
+      }).catch(err => {
+        reportMessage.textContent = "Error submitting report.";
+        console.error(err);
+      });
     });
   </script>
-
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/service-worker.js");
-    }
-  </script>
-
 
 </body>
 
