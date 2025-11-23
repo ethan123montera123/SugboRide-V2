@@ -44,7 +44,7 @@
           <option value="Active">Active</option>
           <option value="Resolved">Resolved</option>
         </select>
-        <input type="text" id="locationFilter" placeholder="Search by location"
+        <input type="text" id="locationFilter" placeholder="Search by city"
           class="px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 flex-1">
       </div>
 
@@ -53,79 +53,79 @@
       </div>
     </div>
 
-  </div>
-
-<!-- Bottom Mobile-Style Navbar -->
+    <!-- Bottom Mobile-Style Navbar -->
     <nav
-        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center">
+      class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center">
 
-        <!-- Dashboard -->
-        <a href="dashboard.html"
-            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
+      <!-- Dashboard -->
+      <a href="dashboard.html"
+        class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
+        </svg>
+        <span class="text-xs font-medium">Dashboard</span>
+      </a>
+
+      <!-- Emergency Dropdown -->
+      <div class="relative group">
+        <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01M12 3C6.48 3 2 7.48 2 13s4.48 10 10 10 10-4.48 10-10S17.52 3 12 3z" />
+          </svg>
+          <span class="text-xs font-medium">Emergency</span>
+        </button>
+        <!-- Dropdown Menu -->
+        <div
+          class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border rounded-xl shadow-lg py-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
+          <a href="fire.html"
+            class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
             </svg>
-            <span class="text-xs font-medium">Dashboard</span>
-        </a>
-
-        <!-- Emergency Dropdown -->
-        <div class="relative group">
-            <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01M12 3C6.48 3 2 7.48 2 13s4.48 10 10 10 10-4.48 10-10S17.52 3 12 3z" />
-                </svg>
-                <span class="text-xs font-medium">Emergency</span>
-            </button>
-            <!-- Dropdown Menu -->
-            <div
-                class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border rounded-xl shadow-lg py-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
-                <a href="fire.html"
-                    class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                    </svg>
-                    Fire
-                </a>
-                <a href="earthquake.html"
-                    class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18v-8l-4 4m8-4l-4 4" />
-                    </svg>
-                    Earthquake
-                </a>
-            </div>
+            Fire
+          </a>
+          <a href="earthquake.html"
+            class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18v-8l-4 4m8-4l-4 4" />
+            </svg>
+            Earthquake
+          </a>
         </div>
+      </div>
 
-        <!-- Account -->
-        <a href="account.html"
-            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M5.121 17.804A6 6 0 0 1 12 15a6 6 0 0 1 6.879 2.804M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z" />
-            </svg>
-            <span class="text-xs font-medium">Account</span>
-        </a>
+      <!-- Account -->
+      <a href="account.html"
+        class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5.121 17.804A6 6 0 0 1 12 15a6 6 0 0 1 6.879 2.804M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z" />
+        </svg>
+        <span class="text-xs font-medium">Account</span>
+      </a>
 
-        <!-- Logout -->
-        <a href="logout.html"
-            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
-            </svg>
-            <span class="text-xs font-medium">Logout</span>
-        </a>
+      <!-- Logout -->
+      <a href="logout.html"
+        class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+        </svg>
+        <span class="text-xs font-medium">Logout</span>
+      </a>
     </nav>
+
+  </div>
 
   <!-- Firebase + Google Maps -->
   <script type="module">
@@ -152,14 +152,15 @@
     const locationFilter = document.getElementById('locationFilter');
 
     let fireData = {};
+    let geocoder;
 
-    // Fetch Data
-    onValue(fireRef, snapshot => {
-      fireData = snapshot.exists() ? snapshot.val() : {};
-      renderFireList();
-    });
+    function initGeocoder() {
+      geocoder = new google.maps.Geocoder();
+    }
 
     function formatTime24to12(timeStr) {
+      if (!timeStr) return "-";
+      if (timeStr.includes("AM") || timeStr.includes("PM")) return timeStr;
       const [hourStr, minute] = timeStr.split(":");
       let hour = parseInt(hourStr);
       const ampm = hour >= 12 ? "PM" : "AM";
@@ -167,17 +168,32 @@
       return `${hour}:${minute} ${ampm}`;
     }
 
-    function renderFireList() {
+    async function getCityFromLatLng(lat, lng) {
+      return new Promise(resolve => {
+        if (!geocoder) return resolve("");
+        geocoder.geocode({ location: { lat: parseFloat(lat), lng: parseFloat(lng) } }, (results, status) => {
+          if (status === "OK" && results[0]) {
+            const addressComponents = results[0].address_components;
+            const cityComp = addressComponents.find(c => c.types.includes("locality") || c.types.includes("administrative_area_level_2"));
+            resolve(cityComp ? cityComp.long_name : "");
+          } else {
+            resolve("");
+          }
+        });
+      });
+    }
+
+    async function renderFireList() {
       fireList.innerHTML = "";
       const statusValue = statusFilter.value.toLowerCase();
       const locationValue = locationFilter.value.toLowerCase();
 
       const keys = Object.keys(fireData).filter(key => {
         const incident = fireData[key];
-        const isStatusAllowed = incident.status === 'Active' || incident.status === 'Resolved';
+        // Only Active or Resolved
+        if (!incident.status || incident.status === "Pending") return false;
         const matchesStatus = statusValue === "" || (incident.status && incident.status.toLowerCase() === statusValue);
-        const matchesLocation = incident.location ? incident.location.toLowerCase().includes(locationValue) : true;
-        return isStatusAllowed && matchesStatus && matchesLocation;
+        return matchesStatus;
       });
 
       if (!keys.length) {
@@ -185,14 +201,16 @@
         return;
       }
 
-      keys.forEach(key => {
+      for (const key of keys) {
         const incident = fireData[key];
+        const lat = incident.lat;
+        const lng = incident.lng;
+        const city = await getCityFromLatLng(lat, lng);
+
+        if (locationValue && !city.toLowerCase().includes(locationValue)) continue;
 
         const date = incident.date || "-";
         const time = incident.time ? formatTime24to12(incident.time) : "-";
-        const lat = incident.lat;
-        const lng = incident.lng;
-
         const mapButton = (lat && lng) ? `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" class="px-3 py-1 bg-blue-500 text-white rounded-full text-sm font-medium hover:bg-blue-600 transition">Location</a>` : "";
 
         const div = document.createElement("div");
@@ -201,6 +219,7 @@
           <div>
             <p class="font-semibold text-red-600">${incident.title}</p>
             <p class="text-gray-600 text-sm">${date} ${time}</p>
+            ${city ? `<p class="text-gray-500 text-sm">City: ${city}</p>` : ""}
           </div>
           <div class="flex gap-2 items-center">
             <span class="px-3 py-1 rounded-full text-white text-sm font-medium ${incident.status === 'Active' ? 'bg-red-500' : 'bg-green-500'}">${incident.status}</span>
@@ -208,8 +227,18 @@
           </div>
         `;
         fireList.appendChild(div);
-      });
+      }
+
+      if (fireList.innerHTML === "") {
+        fireList.innerHTML = `<p class="text-gray-500 text-center">No fire incidents found.</p>`;
+      }
     }
+
+    // Fetch Data
+    onValue(fireRef, snapshot => {
+      fireData = snapshot.exists() ? snapshot.val() : {};
+      renderFireList();
+    });
 
     statusFilter.addEventListener("change", renderFireList);
     locationFilter.addEventListener("input", renderFireList);
@@ -231,7 +260,9 @@
       }
 
       const now = new Date();
-      const date = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getFullYear()}`;
+      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      const date = `${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+
       let hours = now.getHours();
       const minutes = now.getMinutes().toString().padStart(2,'0');
       const ampm = hours >= 12 ? "PM" : "AM";
@@ -255,6 +286,7 @@
         center: { lat: 10.3157, lng: 123.8854 },
         zoom: 13
       });
+      initGeocoder();
 
       map.addListener('click', (e) => {
         const position = e.latLng;
