@@ -1,133 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sugbo Ride Login</title>
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sugbo Ride Login</title>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    <!-- TailwindCSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-const firebaseConfig = {
-    apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
-    authDomain: "sugboride.firebaseapp.com",
-    databaseURL: "https://sugboride-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "sugboride",
-    storageBucket: "sugboride.firebasestorage.app",
-    messagingSenderId: "104362918043",
-    appId: "1:104362918043:web:19a07d398689f6aa61c63e",
-    measurementId: "G-SW0TN1HJG1"
-};
+    <!-- GSAP Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+    <!-- PWA Requirements -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-window.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('loginForm');
-    const loginButton = document.getElementById('loginButton');
-    const buttonText = loginButton.querySelector('span');
-    const spinner = document.getElementById('spinner');
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('togglePassword');
-    const errorMsg = document.getElementById('errorMsg');
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorMsg.textContent = "";
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
+            authDomain: "sugboride.firebaseapp.com",
+            databaseURL: "https://sugboride-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "sugboride",
+            storageBucket: "sugboride.firebasestorage.app",
+            messagingSenderId: "104362918043",
+            appId: "1:104362918043:web:19a07d398689f6aa61c63e",
+            measurementId: "G-SW0TN1HJG1"
+        };
 
-        // Show spinner + overlay
-        spinner.classList.remove('hidden');
-        buttonText.textContent = "Logging in...";
-        loginButton.disabled = true;
-        document.getElementById('overlay').classList.remove('hidden');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-        const email = document.getElementById('email').value;
-        const password = passwordInput.value;
+        window.addEventListener("DOMContentLoaded", () => {
+            const loginForm = document.getElementById("loginForm");
+            const loginButton = document.getElementById("loginButton");
+            const buttonText = loginButton.querySelector("span");
+            const spinner = document.getElementById("spinner");
+            const passwordInput = document.getElementById("password");
+            const togglePassword = document.getElementById("togglePassword");
+            const errorMsg = document.getElementById("errorMsg");
 
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            window.location.href = "dashboard.html";
-        } catch (error) {
-            console.error(error.code, error.message);
-            errorMsg.textContent = error.message;
-        } finally {
-            spinner.classList.add('hidden');
-            buttonText.textContent = "Login";
-            loginButton.disabled = false;
-            document.getElementById('overlay').classList.add('hidden');
-        }
-    });
+            loginForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                errorMsg.textContent = "";
 
-    // Toggle password visibility
-    togglePassword.addEventListener('click', () => {
-        passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-        togglePassword.innerText = passwordInput.type === "password" ? "👁️" : "🙈";
-    });
-});
+                spinner.classList.remove("hidden");
+                buttonText.textContent = "Logging in...";
+                loginButton.disabled = true;
+                document.getElementById("overlay").classList.remove("hidden");
 
-// Register service worker for PWA
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-    .then(() => console.log('Service Worker registered'))
-    .catch(err => console.error('SW registration failed:', err));
-}
-</script>
+                const email = document.getElementById("email").value;
+                const password = passwordInput.value;
+
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.location.href = "dashboard.html";
+                } catch (error) {
+                    errorMsg.textContent = "Invalid email or password.";
+                } finally {
+                    spinner.classList.add("hidden");
+                    buttonText.textContent = "Login";
+                    loginButton.disabled = false;
+                    document.getElementById("overlay").classList.add("hidden");
+                }
+            });
+
+            togglePassword.addEventListener("click", () => {
+                passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+                togglePassword.innerText = passwordInput.type === "password" ? "👁️" : "🙈";
+            });
+        });
+    </script>
 
 </head>
+
 <body class="bg-gradient-to-b from-blue-600 to-blue-300 min-h-screen flex items-center justify-center px-6 overflow-x-hidden relative">
 
-<!-- Full-page overlay -->
-<div id="overlay" class="hidden absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-20">
-    <div class="loader border-4 border-white border-t-blue-600 rounded-full w-12 h-12 animate-spin"></div>
-</div>
-
-<div class="bg-white w-full max-w-md p-10 rounded-3xl shadow-2xl animate-fade relative z-10">
-    <!-- Logo -->
-    <div class="text-center mb-8">
-        <h1 class="text-4xl font-extrabold text-blue-600">Sugbo Ride</h1>
-        <p class="text-gray-600 mt-2">Welcome back! Please login to continue.</p>
+    <!-- Full-page overlay -->
+    <div id="overlay" class="hidden absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-20">
+        <div class="loader border-4 border-white border-t-blue-600 rounded-full w-12 h-12 animate-spin"></div>
     </div>
 
-    <!-- Login Form -->
-    <form id="loginForm">
-        <div class="mb-4">
-            <label for="email" class="block text-gray-700 mb-2 font-semibold">Email</label>
-            <input id="email" type="email" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="your@email.com" required />
+    <div class="bg-white w-full max-w-md p-10 rounded-3xl shadow-2xl animate-fade relative z-10">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-blue-600">Sugbo Ride</h1>
+            <p class="text-gray-600 mt-2">Welcome back! Please login to continue.</p>
         </div>
 
-        <div class="mb-2 relative">
-            <label for="password" class="block text-gray-700 mb-2 font-semibold">Password</label>
-            <input id="password" type="password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••••••" required />
-            <button type="button" id="togglePassword" class="absolute right-3 top-10 text-gray-600 text-lg">👁️</button>
+        <!-- Login Form -->
+        <form id="loginForm">
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 mb-2 font-semibold">Email</label>
+                <input id="email" type="email"
+                       class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                       placeholder="your@email.com"
+                       required />
+            </div>
+
+            <div class="mb-2 relative">
+                <label for="password" class="block text-gray-700 mb-2 font-semibold">Password</label>
+                <input id="password" type="password"
+                       class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                       placeholder="••••••••"
+                       required />
+                <button type="button" id="togglePassword"
+                        class="absolute right-3 top-10 text-gray-600 text-lg">👁️</button>
+            </div>
+
+            <p id="errorMsg" class="text-red-500 text-sm mb-4"></p>
+
+            <button type="submit" id="loginButton"
+                    class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-lg shadow-lg hover:bg-blue-700 transition flex items-center justify-center">
+                <svg id="spinner" class="animate-spin h-5 w-5 mr-2 hidden text-white"
+                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                            stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                <span>Login</span>
+            </button>
+        </form>
+
+        <div class="text-center mt-6">
+            <a href="#" class="text-blue-700 font-semibold hover:underline">Forgot Password?</a>
         </div>
-        <p id="errorMsg" class="text-red-500 text-sm mb-4"></p>
 
-        <button type="submit" id="loginButton" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-lg shadow-lg hover:bg-blue-700 transition flex items-center justify-center">
-            <svg id="spinner" class="animate-spin h-5 w-5 mr-2 hidden text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-            </svg>
-            <span>Login</span>
-        </button>
-    </form>
-
-    <!-- Extra Options -->
-    <div class="text-center mt-6">
-        <a href="#" class="text-blue-700 font-semibold hover:underline">Forgot Password?</a>
+        <div class="text-center mt-4 text-gray-700">
+            Don’t have an account?
+            <a href="signup.html" class="text-blue-700 font-semibold hover:underline">Register</a>
+        </div>
     </div>
 
-    <div class="text-center mt-4 text-gray-700">
-        Don’t have an account? <a href="signup.html" class="text-blue-700 font-semibold hover:underline">Register</a>
-    </div>
-</div>
+    <!-- GSAP Animation -->
+    <script>
+        gsap.from(".animate-fade", { duration: 1, opacity: 0, y: 40 });
+    </script>
 
-<!-- Animations -->
-<script>
-    gsap.from('.animate-fade', { duration: 1, opacity: 0, y: 40 });
-</script>
+    <!-- PWA Service Worker Registration (Correct, Only One) -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/service-worker.js")
+                .then(() => console.log("Service Worker registered (login page)"))
+                .catch(err => console.log("SW registration failed:", err));
+        }
+    </script>
 
 </body>
 </html>
