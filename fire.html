@@ -10,58 +10,6 @@
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- Bottom Navbar -->
-  <nav
-    class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 md:w-3/4 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center z-50">
-    <a href="dashboard.html"
-      class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
-        stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
-      </svg>
-      <span class="text-xs font-medium">Dashboard</span>
-    </a>
-
-    <div class="relative group">
-      <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 9v2m0 4h.01M12 3C6.48 3 2 7.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 3 12 3z" />
-        </svg>
-        <span class="text-xs font-medium">Emergency</span>
-      </button>
-      <div
-        class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border rounded-xl shadow-lg py-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
-        <a href="fire.html" class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">🔥
-          Fire</a>
-        <a href="earthquake.html"
-          class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">🌍 Earthquake</a>
-      </div>
-    </div>
-
-    <a href="account.html"
-      class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
-        stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M5.121 17.804A6 6 0 0 1 12 15a6 6 0 0 1 6.879 2.804M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z" />
-      </svg>
-      <span class="text-xs font-medium">Account</span>
-    </a>
-
-    <a href="logout.html"
-      class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
-        stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
-      </svg>
-      <span class="text-xs font-medium">Logout</span>
-    </a>
-  </nav>
-
   <!-- Main Content: Two Columns -->
   <div class="flex-1 w-full px-4 md:px-8 py-6 max-w-full grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -71,23 +19,23 @@
       <form id="reportForm" class="flex flex-col gap-3">
         <input type="text" id="fireName" placeholder="Fire Name" required
           class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400">
-        <input type="text" id="fireLocation" placeholder="Location" required
-          class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400">
-        <input type="date" id="fireDate" required
-          class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400">
-        <input type="time" id="fireTime" required
-          class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400">
+
+        <!-- Google Map -->
+        <div id="map" class="rounded-xl border border-gray-300 mb-2" style="height:250px;"></div>
+        <input type="hidden" id="fireLat">
+        <input type="hidden" id="fireLng">
+
         <textarea id="fireDescription" placeholder="Description (optional)"
           class="px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400"></textarea>
         <button type="submit"
           class="bg-red-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-red-700 transition-colors">Submit
           Report</button>
-        <p id="reportMessage" class="text-sm text-green-600"></p>
+        <p id="reportMessage" class="text-sm text-green-600 mt-1"></p>
       </form>
     </div>
 
     <!-- Right Column: Fire Incidents -->
-    <div class="flex flex-col mb-20">
+    <div class="flex flex-col mb-28">
       <!-- Filters -->
       <div class="flex flex-wrap justify-between gap-4 mb-4">
         <select id="statusFilter"
@@ -107,7 +55,79 @@
 
   </div>
 
-  <!-- Firebase -->
+<!-- Bottom Mobile-Style Navbar -->
+    <nav
+        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center">
+
+        <!-- Dashboard -->
+        <a href="dashboard.html"
+            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
+            </svg>
+            <span class="text-xs font-medium">Dashboard</span>
+        </a>
+
+        <!-- Emergency Dropdown -->
+        <div class="relative group">
+            <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01M12 3C6.48 3 2 7.48 2 13s4.48 10 10 10 10-4.48 10-10S17.52 3 12 3z" />
+                </svg>
+                <span class="text-xs font-medium">Emergency</span>
+            </button>
+            <!-- Dropdown Menu -->
+            <div
+                class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border rounded-xl shadow-lg py-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
+                <a href="fire.html"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                    </svg>
+                    Fire
+                </a>
+                <a href="earthquake.html"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18v-8l-4 4m8-4l-4 4" />
+                    </svg>
+                    Earthquake
+                </a>
+            </div>
+        </div>
+
+        <!-- Account -->
+        <a href="account.html"
+            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5.121 17.804A6 6 0 0 1 12 15a6 6 0 0 1 6.879 2.804M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z" />
+            </svg>
+            <span class="text-xs font-medium">Account</span>
+        </a>
+
+        <!-- Logout -->
+        <a href="logout.html"
+            class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+            </svg>
+            <span class="text-xs font-medium">Logout</span>
+        </a>
+    </nav>
+
+  <!-- Firebase + Google Maps -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
@@ -133,78 +153,123 @@
 
     let fireData = {};
 
-    // Render Fire List (only Active and Resolved)
-    const renderFireList = () => {
-      fireList.innerHTML = '';
-      const statusValue = statusFilter.value.toLowerCase();
-      const locationValue = locationFilter.value.toLowerCase();
-
-      const filtered = Object.keys(fireData).filter(key => {
-        const incident = fireData[key];
-        const isStatusAllowed = incident.status === 'Active' || incident.status === 'Resolved';
-        const matchesStatus = statusValue === "" || (incident.status && incident.status.toLowerCase() === statusValue);
-        const matchesLocation = incident.location && incident.location.toLowerCase().includes(locationValue);
-        return isStatusAllowed && matchesStatus && matchesLocation;
-      });
-
-      if (filtered.length === 0) {
-        fireList.innerHTML = `<p class="text-gray-500 text-center">No fire incidents found.</p>`;
-        return;
-      }
-
-      filtered.forEach(key => {
-        const incident = fireData[key];
-        const div = document.createElement('div');
-        div.className = "bg-white p-3 rounded-2xl shadow flex justify-between items-center hover:shadow-lg transition-shadow duration-200";
-        div.innerHTML = `
-          <div>
-            <p class="font-semibold text-red-600">${incident.title}</p>
-            <p class="text-gray-600 text-sm">${incident.location} - ${incident.date} ${incident.time}</p>
-          </div>
-          <span class="px-3 py-1 rounded-full text-white text-sm font-medium ${
-            incident.status === 'Active' ? 'bg-red-500' : 'bg-green-500'
-          }">${incident.status}</span>
-        `;
-        fireList.appendChild(div);
-      });
-    };
-
-    // Load Fire Incidents
+    // Fetch Data
     onValue(fireRef, snapshot => {
       fireData = snapshot.exists() ? snapshot.val() : {};
       renderFireList();
     });
 
-    statusFilter.addEventListener('change', renderFireList);
-    locationFilter.addEventListener('input', renderFireList);
+    function formatTime24to12(timeStr) {
+      const [hourStr, minute] = timeStr.split(":");
+      let hour = parseInt(hourStr);
+      const ampm = hour >= 12 ? "PM" : "AM";
+      hour = hour % 12 || 12;
+      return `${hour}:${minute} ${ampm}`;
+    }
+
+    function renderFireList() {
+      fireList.innerHTML = "";
+      const statusValue = statusFilter.value.toLowerCase();
+      const locationValue = locationFilter.value.toLowerCase();
+
+      const keys = Object.keys(fireData).filter(key => {
+        const incident = fireData[key];
+        const isStatusAllowed = incident.status === 'Active' || incident.status === 'Resolved';
+        const matchesStatus = statusValue === "" || (incident.status && incident.status.toLowerCase() === statusValue);
+        const matchesLocation = incident.location ? incident.location.toLowerCase().includes(locationValue) : true;
+        return isStatusAllowed && matchesStatus && matchesLocation;
+      });
+
+      if (!keys.length) {
+        fireList.innerHTML = `<p class="text-gray-500 text-center">No fire incidents found.</p>`;
+        return;
+      }
+
+      keys.forEach(key => {
+        const incident = fireData[key];
+
+        const date = incident.date || "-";
+        const time = incident.time ? formatTime24to12(incident.time) : "-";
+        const lat = incident.lat;
+        const lng = incident.lng;
+
+        const mapButton = (lat && lng) ? `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" class="px-3 py-1 bg-blue-500 text-white rounded-full text-sm font-medium hover:bg-blue-600 transition">View Location</a>` : "";
+
+        const div = document.createElement("div");
+        div.className = "bg-white p-3 rounded-2xl shadow flex justify-between items-center hover:shadow-lg transition-shadow duration-200";
+        div.innerHTML = `
+          <div>
+            <p class="font-semibold text-red-600">${incident.title}</p>
+            <p class="text-gray-600 text-sm">${date} ${time}</p>
+          </div>
+          <div class="flex gap-2 items-center">
+            <span class="px-3 py-1 rounded-full text-white text-sm font-medium ${incident.status === 'Active' ? 'bg-red-500' : 'bg-green-500'}">${incident.status}</span>
+            ${mapButton}
+          </div>
+        `;
+        fireList.appendChild(div);
+      });
+    }
+
+    statusFilter.addEventListener("change", renderFireList);
+    locationFilter.addEventListener("input", renderFireList);
 
     // Handle Report Form
     const reportForm = document.getElementById('reportForm');
     const reportMessage = document.getElementById('reportMessage');
 
-    reportForm.addEventListener('submit', (e) => {
+    reportForm.addEventListener("submit", (e) => {
       e.preventDefault();
+      const fireName = document.getElementById('fireName').value;
+      const lat = document.getElementById('fireLat').value;
+      const lng = document.getElementById('fireLng').value;
+      const description = document.getElementById('fireDescription').value;
 
-      const newFire = {
-        title: document.getElementById('fireName').value,
-        location: document.getElementById('fireLocation').value,
-        date: document.getElementById('fireDate').value,
-        time: document.getElementById('fireTime').value,
-        description: document.getElementById('fireDescription').value,
-        status: 'Pending' // Admin will verify
-      };
+      if (!lat || !lng) {
+        reportMessage.textContent = "Please select a location on the map.";
+        return;
+      }
 
-      push(fireRef, newFire).then(() => {
-        reportMessage.textContent = "Fire report submitted successfully!";
-        reportForm.reset();
-        setTimeout(() => reportMessage.textContent = "", 3000);
-      }).catch(err => {
-        reportMessage.textContent = "Error submitting report.";
-        console.error(err);
-      });
+      const now = new Date();
+      const date = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getFullYear()}`;
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2,'0');
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12 || 12;
+      const time = `${hours}:${minutes} ${ampm}`;
+
+      push(fireRef, { title: fireName, lat, lng, date, time, description, status: 'Pending' })
+        .then(() => {
+          reportMessage.textContent = "Fire report submitted successfully!";
+          reportForm.reset();
+          if (marker) marker.setMap(null);
+          setTimeout(() => reportMessage.textContent = "", 3000);
+        })
+        .catch(err => console.error(err));
     });
+
+    // Google Maps
+    let map, marker;
+    window.initMap = function () {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 10.3157, lng: 123.8854 },
+        zoom: 13
+      });
+
+      map.addListener('click', (e) => {
+        const position = e.latLng;
+        document.getElementById('fireLat').value = position.lat();
+        document.getElementById('fireLng').value = position.lng();
+
+        if (marker) marker.setMap(null);
+        marker = new google.maps.Marker({ position, map });
+      });
+    }
   </script>
 
-</body>
+  <!-- Google Maps API -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&callback=initMap"></script>
 
+</body>
 </html>
