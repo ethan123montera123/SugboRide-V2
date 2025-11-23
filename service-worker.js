@@ -9,8 +9,7 @@ const ASSETS_TO_CACHE = [
   "/fire.html",
   "/signup.html",
   "/manifest.json",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
+  "/assets/Logo.png",
   "https://cdn.tailwindcss.com" 
 ];
 
