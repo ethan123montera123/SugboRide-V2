@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SugboRide</title>
+    <meta name="description" content="Earthquake Tracker - Coming Soon">
+    <meta name="theme-color" content="#1E40AF">
+
+    <!-- PWA Requirements -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" href="assets/Logo.png">
+    <link rel="apple-touch-icon" href="assets/Logo.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Optional: Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Pulse animation for icon */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 min-h-screen flex flex-col justify-center items-center text-white px-4 relative">
+
+    <!-- Back Button -->
+    <a href="dashboard.html"
+        class="absolute top-6 left-6 flex items-center gap-2 bg-white/20 hover:bg-white/30 transition px-3 py-2 rounded-lg text-white font-medium shadow-md">
+        <!-- Arrow Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+    </a>
+
+    <!-- Icon / Logo -->
+    <div class="mb-6 flex flex-col items-center">
+        <svg xmlns="http://www.w3.org/2000/svg"
+            class="h-24 w-24 text-yellow-400 pulse shadow-lg rounded-full p-2 bg-white/10" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h1 class="text-3xl md:text-5xl font-bold mt-4 text-center drop-shadow-lg">Earthquake Tracker</h1>
+    </div>
+
+    <!-- Coming Soon Text -->
+    <p class="text-center text-lg md:text-xl mb-6 text-gray-200 max-w-md drop-shadow-sm">
+        We're preparing real-time earthquake updates to keep you informed and safe.
+    </p>
+
+    <!-- Countdown Box -->
+    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 text-center mb-6 w-full max-w-sm shadow-lg">
+        <p class="text-yellow-300 font-semibold mb-2 text-lg">Coming Soon In:</p>
+        <div id="countdown" class="text-2xl md:text-3xl font-bold tracking-wider"></div>
+    </div>
+
+    <!-- Notify Me / Email -->
+    <form class="flex flex-col sm:flex-row w-full max-w-md gap-3">
+        <input type="email" placeholder="Enter your email"
+            class="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+            required>
+        <button type="submit"
+            class="bg-yellow-400 text-gray-900 font-semibold px-4 py-3 rounded-lg hover:bg-yellow-500 transition shadow-md">
+            Notify Me
+        </button>
+    </form>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-gray-300 text-sm">
+        &copy; 2025 Earthquake Tracker. All rights reserved.
+    </footer>
+
+    <!-- Countdown Script -->
+    <script>
+        const countdown = document.getElementById('countdown');
+        // Launch date: December 5, 2025 at 12:00 AM
+        const launchDate = new Date("December 5, 2025 00:00:00").getTime();
+
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const distance = launchDate - now;
+
+            if (distance < 0) {
+                countdown.innerHTML = "Launched!";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/service-worker.js")
+                .then(() => console.log("Service Worker registered"))
+                .catch(err => console.log("SW registration failed:", err));
+        }
+    </script>
+
+</body>
+
+</html>

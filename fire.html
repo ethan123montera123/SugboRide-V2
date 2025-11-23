@@ -4,11 +4,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fire Emergencies</title>
+  <title>SugboRide</title>
+
+  <!-- PWA Requirements -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="icon" href="assets/Logo.png">
+  <link rel="apple-touch-icon" href="assets/Logo.png">
+
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      display: none;
+    }
+
+    #loadingOverlay span {
+      background: white;
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      font-weight: bold;
+      color: #e11d48;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay"><span>Logging out...</span></div>
 
   <!-- Main Content: Two Columns -->
   <div class="flex-1 w-full px-4 md:px-8 py-6 max-w-full grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -63,7 +93,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
+            d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6m-6 0H7v6h6v6h6v-6h2" />
         </svg>
         <span class="text-xs font-medium">Dashboard</span>
       </a>
@@ -74,19 +104,17 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01M12 3C6.48 3 2 7.48 2 13s4.48 10 10 10 10-4.48 10-10S17.52 3 12 3z" />
+              d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
           </svg>
           <span class="text-xs font-medium">Emergency</span>
         </button>
-        <!-- Dropdown Menu -->
         <div
           class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border rounded-xl shadow-lg py-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
-          <a href="fire.html"
-            class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+          <a href="fire.html" class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                d="M12 2C10.343 5.5 7 8 7 12a5 5 0 0010 0c0-4-3.343-6.5-5-10z" />
             </svg>
             Fire
           </a>
@@ -95,7 +123,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18v-8l-4 4m8-4l-4 4" />
+                d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
             </svg>
             Earthquake
           </a>
@@ -108,13 +136,13 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M5.121 17.804A6 6 0 0 1 12 15a6 6 0 0 1 6.879 2.804M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z" />
+            d="M5.121 17.804A6 6 0 0112 15a6 6 0 016.879 2.804M12 12a5 5 0 100-10 5 5 0 000 10z" />
         </svg>
         <span class="text-xs font-medium">Account</span>
       </a>
 
       <!-- Logout -->
-      <a href="logout.html"
+      <a href="javascript:void(0)" id="logoutBtn"
         class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
@@ -131,6 +159,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
@@ -145,17 +174,56 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
     const fireRef = ref(db, 'fireIncidents');
 
     const fireList = document.getElementById('fireList');
     const statusFilter = document.getElementById('statusFilter');
     const locationFilter = document.getElementById('locationFilter');
 
+    // ---------------- SECURITY ----------------
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    });
+
+    // ---------------- LOGOUT ----------------
+    const logoutBtn = document.getElementById("logoutBtn");
+    logoutBtn.addEventListener("click", () => {
+      const overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+
+      signOut(auth).then(() => {
+        alert("Logout successful!");
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1000);
+      }).catch(err => {
+        overlay.style.display = "none";
+        console.error(err);
+        alert("Logout failed. Try again.");
+      });
+    });
+
+    // ---------------- FIRE INCIDENTS ----------------
     let fireData = {};
     let geocoder;
 
     function initGeocoder() {
       geocoder = new google.maps.Geocoder();
+    }
+
+    async function getCityFromLatLng(lat, lng) {
+      return new Promise(resolve => {
+        if (!geocoder) return resolve("");
+        geocoder.geocode({ location: { lat: parseFloat(lat), lng: parseFloat(lng) } }, (results, status) => {
+          if (status === "OK" && results[0]) {
+            const cityComp = results[0].address_components.find(c => c.types.includes("locality") || c.types.includes("administrative_area_level_2"));
+            resolve(cityComp ? cityComp.long_name : "");
+          } else resolve("");
+        });
+      });
     }
 
     function formatTime24to12(timeStr) {
@@ -168,21 +236,6 @@
       return `${hour}:${minute} ${ampm}`;
     }
 
-    async function getCityFromLatLng(lat, lng) {
-      return new Promise(resolve => {
-        if (!geocoder) return resolve("");
-        geocoder.geocode({ location: { lat: parseFloat(lat), lng: parseFloat(lng) } }, (results, status) => {
-          if (status === "OK" && results[0]) {
-            const addressComponents = results[0].address_components;
-            const cityComp = addressComponents.find(c => c.types.includes("locality") || c.types.includes("administrative_area_level_2"));
-            resolve(cityComp ? cityComp.long_name : "");
-          } else {
-            resolve("");
-          }
-        });
-      });
-    }
-
     async function renderFireList() {
       fireList.innerHTML = "";
       const statusValue = statusFilter.value.toLowerCase();
@@ -190,10 +243,8 @@
 
       const keys = Object.keys(fireData).filter(key => {
         const incident = fireData[key];
-        // Only Active or Resolved
         if (!incident.status || incident.status === "Pending") return false;
-        const matchesStatus = statusValue === "" || (incident.status && incident.status.toLowerCase() === statusValue);
-        return matchesStatus;
+        return statusValue === "" || (incident.status && incident.status.toLowerCase() === statusValue);
       });
 
       if (!keys.length) {
@@ -229,12 +280,9 @@
         fireList.appendChild(div);
       }
 
-      if (fireList.innerHTML === "") {
-        fireList.innerHTML = `<p class="text-gray-500 text-center">No fire incidents found.</p>`;
-      }
+      if (fireList.innerHTML === "") fireList.innerHTML = `<p class="text-gray-500 text-center">No fire incidents found.</p>`;
     }
 
-    // Fetch Data
     onValue(fireRef, snapshot => {
       fireData = snapshot.exists() ? snapshot.val() : {};
       renderFireList();
@@ -243,7 +291,7 @@
     statusFilter.addEventListener("change", renderFireList);
     locationFilter.addEventListener("input", renderFireList);
 
-    // Handle Report Form
+    // ---------------- REPORT FORM ----------------
     const reportForm = document.getElementById('reportForm');
     const reportMessage = document.getElementById('reportMessage');
 
@@ -260,11 +308,10 @@
       }
 
       const now = new Date();
-      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       const date = `${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
-
       let hours = now.getHours();
-      const minutes = now.getMinutes().toString().padStart(2,'0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
       const ampm = hours >= 12 ? "PM" : "AM";
       hours = hours % 12 || 12;
       const time = `${hours}:${minutes} ${ampm}`;
@@ -279,7 +326,7 @@
         .catch(err => console.error(err));
     });
 
-    // Google Maps
+    // ---------------- GOOGLE MAP ----------------
     let map, marker;
     window.initMap = function () {
       map = new google.maps.Map(document.getElementById('map'), {
@@ -303,5 +350,14 @@
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFSBBi31TWkJKbhwIQVnK4UdjUgksZ6nE&callback=initMap"></script>
 
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js")
+        .then(() => console.log("Service Worker registered"))
+        .catch(err => console.log("SW registration failed:", err));
+    }
+  </script>
+
 </body>
+
 </html>

@@ -4,14 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account</title>
+  <title>SugboRide</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2563eb">
   <link rel="icon" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col" style="margin-bottom: 80px">
@@ -21,7 +20,6 @@
       <h1 class="text-3xl font-bold text-gray-700 mb-8 text-center">Account Details</h1>
 
       <form id="accountForm" class="flex flex-col gap-6">
-
         <!-- Name -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -81,59 +79,79 @@
           Save Changes
         </button>
 
-        <!-- Toast Notification below Save button -->
+        <!-- Toast Notification -->
         <div id="toast"
           class="mb-14 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg opacity-0 transition-opacity duration-300 text-center">
           Saved successfully!
         </div>
-
       </form>
+
     </div>
   </div>
 
-  <!-- Bottom Navbar -->
+  <!-- Bottom Mobile-Style Navbar -->
   <nav
     class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-white rounded-3xl shadow-xl px-6 py-3 flex justify-between items-center">
-    <a href="dashboard.html"
-      class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+    <a href="dashboard.html" class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+      <!-- Home Icon -->
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9z" />
+          d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6m-6 0H7v6h6v6h6v-6h2" />
       </svg>
       <span class="text-xs font-medium">Dashboard</span>
     </a>
 
+    <!-- Emergency Dropdown -->
     <div class="relative group">
       <button class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+        <!-- Alert Icon -->
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 9v2m0 4h.01M12 3C6.48 3 2 7.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 3 12 3z" />
+            d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
         </svg>
         <span class="text-xs font-medium">Emergency</span>
       </button>
       <div
         class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border rounded-xl shadow-lg py-2 w-36 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-50">
-        <a href="fire.html" class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">🔥
-          Fire</a>
+        <a href="fire.html" class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+          <!-- Fire Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 2C10.343 5.5 7 8 7 12a5 5 0 0010 0c0-4-3.343-6.5-5-10z" />
+          </svg>
+          Fire
+        </a>
         <a href="earthquake.html"
-          class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">🌍 Earthquake</a>
+          class="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+          <!-- Earthquake Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+          </svg>
+          Earthquake
+        </a>
       </div>
     </div>
 
-    <a href="account.html"
-      class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+    <!-- Account -->
+    <a href="account.html" class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+      <!-- User Icon -->
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M5.121 17.804A6 6 0 0 1 12 15a6 6 0 0 1 6.879 2.804M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z" />
+          d="M5.121 17.804A6 6 0 0112 15a6 6 0 016.879 2.804M12 12a5 5 0 100-10 5 5 0 000 10z" />
       </svg>
       <span class="text-xs font-medium">Account</span>
     </a>
 
-    <a href="logout.html"
+    <!-- Logout -->
+    <a href="javascript:void(0)" id="logoutBtn"
       class="flex flex-col items-center text-gray-800 hover:text-black transition-colors duration-200">
+      <!-- Logout Icon -->
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -143,10 +161,11 @@
     </a>
   </nav>
 
+  <!-- Firebase + Account Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC6i6Dteqfk45ghsdzzBsLBMhnBtbtY8EA",
@@ -161,12 +180,13 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const auth = getAuth();
+    const auth = getAuth(app);
 
     let currentUserUid = null;
     const toast = document.getElementById('toast');
     const saveBtn = document.getElementById('saveBtn');
 
+    // ---------------- SECURITY ----------------
     onAuthStateChanged(auth, user => {
       if (user) {
         currentUserUid = user.uid;
@@ -180,7 +200,7 @@
             document.getElementById('contact').value = data.contact || '';
             document.getElementById('email').value = data.email || '';
             document.getElementById('gender').value = data.gender || '';
-            document.getElementById('location').value = data.address || '';
+            document.getElementById('location').value = data.location || '';
           }
         }).catch(error => console.error(error));
       } else {
@@ -188,6 +208,7 @@
       }
     });
 
+    // ---------------- SAVE ACCOUNT DATA ----------------
     document.getElementById('accountForm').addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentUserUid) return;
@@ -200,7 +221,7 @@
         contact: document.getElementById('contact').value,
         email: document.getElementById('email').value,
         gender: document.getElementById('gender').value,
-        location: document.getElementById('address').value
+        location: document.getElementById('location').value
       };
 
       set(ref(db, 'users/' + currentUserUid), updatedData)
@@ -215,15 +236,17 @@
           saveBtn.disabled = false;
         });
     });
+
+    // ---------------- LOGOUT ----------------
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      signOut(auth).then(() => {
+        alert("Logout successful!");
+        window.location.href = "login.html";
+      }).catch(err => {
+        console.error(err);
+        alert("Logout failed, try again.");
+      });
+    });
   </script>
-
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/service-worker.js");
-    }
-  </script>
-
-
 </body>
-
 </html>
